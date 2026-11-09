@@ -68,6 +68,16 @@ app.use('/coupons', couponRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/reviews', reviewRoutes);
 
+// Endpoint lấy menu điều hướng
+app.get(['/menu', '/api/menu'], (req, res) => {
+  res.json([
+    { id: 1, title: 'Trang chủ', url: './index.html', isHome: true },
+    { id: 2, title: 'Sách mới', url: '#newProductsSection' },
+    { id: 3, title: 'Thể loại sách', url: '#products', hasDropdown: true },
+    { id: 4, title: 'Đơn hàng', url: './pages/orders.html', requireAuth: true }
+  ]);
+});
+
 // Endpoint tương thích ngược cho các query user từ json-server cũ (GET /user?email=...&password=...)
 app.get(['/user', '/users'], async (req, res, next) => {
   try {
@@ -98,3 +108,4 @@ app.listen(PORT, () => {
   console.log(`📦 Database: MySQL 8.0 (Docker nhasach-mysql:3306)`);
   console.log(`======================================================\n`);
 });
+

@@ -15,9 +15,7 @@ export const menuService = {
                 { id: 1, title: 'Trang chủ', url: './index.html', isHome: true },
                 { id: 2, title: 'Sách mới', url: '#newProductsSection' },
                 { id: 3, title: 'Thể loại sách', url: '#products', hasDropdown: true },
-                { id: 4, title: 'Đơn hàng', url: './pages/orders.html', requireAuth: true },
-                { id: 5, title: 'Giới thiệu', url: '#about' },
-                { id: 6, title: 'Liên hệ', url: '#contact' }
+                { id: 4, title: 'Đơn hàng', url: './pages/orders.html', requireAuth: true }
             ];
         }
     }

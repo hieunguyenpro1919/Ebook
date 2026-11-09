@@ -1283,16 +1283,6 @@
       "title": "Đơn hàng",
       "url": "./pages/orders.html",
       "requireAuth": true
-    },
-    {
-      "id": 5,
-      "title": "Giới thiệu",
-      "url": "#about"
-    },
-    {
-      "id": 6,
-      "title": "Liên hệ",
-      "url": "#contact"
     }
   ],
   "reviews": [

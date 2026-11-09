@@ -77,6 +77,15 @@ const cartCount = document.querySelector('#cartCount');
 const wishlistCount = document.querySelector('#wishlistCount');
 const adminLink = document.querySelector('#adminLink');
 
+// Dropdown tài khoản mới
+const userDropdownWrap = document.querySelector('#userDropdownWrap');
+const userDropdownBtn = document.querySelector('#userDropdownBtn');
+const userDropdownMenu = document.querySelector('#userDropdownMenu');
+const userDropdownFullName = document.querySelector('#userDropdownFullName');
+const userRoleBadge = document.querySelector('#userRoleBadge');
+const sellerPortalLink = document.querySelector('#sellerPortalLink');
+const adminPortalLink = document.querySelector('#adminPortalLink');
+
 // 1. Tải danh mục từ Service
 async function loadCategories() {
     try {
@@ -825,35 +834,48 @@ function setupCurrentUser() {
     const user = authService.getCurrentUser();
 
     if (user) {
-        const roleLabel = user.role === 'admin' ? ' (Admin)' : user.role === 'seller' ? ' (Người bán)' : '';
-        if (userName) userName.textContent = (user.shopName || user.name || user.email) + roleLabel;
+        const displayName = user.shopName || user.name || user.email;
+        if (userName) userName.textContent = displayName;
+        if (userDropdownFullName) userDropdownFullName.textContent = displayName;
+
+        // Avatar
         if (userAvatarWrap) {
             if (user.avatar && user.avatar.trim() !== '') {
-                userAvatarWrap.innerHTML = `<img src="${user.avatar}" alt="Avatar" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;">`;
+                userAvatarWrap.innerHTML = `<img src="${user.avatar}" alt="Avatar">`;
             } else {
                 userAvatarWrap.textContent = '👤';
             }
         }
-        if (userText) userText.style.display = 'inline-flex';
-        if (logoutBtn) logoutBtn.style.display = 'inline-block';
-        if (adminLink) {
+
+        // Badge vai trò & hiển thị các mục tương ứng trong dropdown
+        if (userRoleBadge) {
+            userRoleBadge.className = 'user-role-badge';
             if (user.role === 'admin') {
-                adminLink.style.display = 'inline-flex';
-                adminLink.innerHTML = '👑 Quản trị Admin';
-                adminLink.href = './pages/admin.html';
+                userRoleBadge.textContent = '👑 Quản trị viên';
+                userRoleBadge.classList.add('admin');
             } else if (user.role === 'seller') {
-                adminLink.style.display = 'inline-flex';
-                adminLink.innerHTML = '🏪 Kênh Người Bán';
-                adminLink.href = './pages/seller.html';
+                userRoleBadge.textContent = '🏪 Người bán';
+                userRoleBadge.classList.add('seller');
             } else {
-                adminLink.style.display = 'none';
+                userRoleBadge.textContent = 'Khách hàng';
             }
         }
+
+        // Phân quyền link Kênh Người Bán & Trang Quản Trị trong Dropdown
+        if (sellerPortalLink) {
+            sellerPortalLink.style.display = (user.role === 'seller' || user.role === 'admin') ? 'flex' : 'none';
+        }
+        if (adminPortalLink) {
+            adminPortalLink.style.display = user.role === 'admin' ? 'flex' : 'none';
+        }
+
+        if (userDropdownWrap) userDropdownWrap.style.display = 'inline-block';
         if (authLinks) authLinks.style.display = 'none';
     } else {
-        if (userText) userText.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = 'none';
-        if (adminLink) adminLink.style.display = 'none';
+        if (userDropdownWrap) {
+            userDropdownWrap.style.display = 'none';
+            userDropdownWrap.classList.remove('open');
+        }
         if (authLinks) authLinks.style.display = 'flex';
     }
 
@@ -924,7 +946,23 @@ document.addEventListener('click', async (e) => {
     }
 });
 
-// 12. Sự kiện Đăng xuất
+// 12. Sự kiện Dropdown và Đăng xuất
+if (userDropdownBtn && userDropdownWrap) {
+    userDropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userDropdownWrap.classList.toggle('open');
+        const isOpen = userDropdownWrap.classList.contains('open');
+        userDropdownBtn.setAttribute('aria-expanded', isOpen);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!userDropdownWrap.contains(e.target)) {
+            userDropdownWrap.classList.remove('open');
+            userDropdownBtn.setAttribute('aria-expanded', 'false');
+        }
+    });
+}
+
 if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
         authService.logout();

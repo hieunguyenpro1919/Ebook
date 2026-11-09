@@ -40,15 +40,43 @@
                 <button type="button" class="theme-switch-btn" title="Đổi giao diện Sáng / Tối" aria-label="Đổi giao diện">🌙</button>
 
                 <div class="user-status" id="userStatus">
-                    <!-- Sẽ hiển thị qua JS nếu đã đăng nhập hoặc chưa -->
-                    <a href="./pages/admin.html" id="adminLink" class="btn-auth btn-admin-badge" style="display: none;" title="Vào trang quản trị">
-                        ⚙️ Quản trị
-                    </a>
-                    <a href="./pages/profile.html" id="userText" class="user-badge" style="display: none; text-decoration: none; cursor: pointer;" title="Xem và chỉnh sửa hồ sơ tài khoản">
-                        <span id="userAvatarWrap" style="display: inline-flex; align-items: center;">👤</span>
-                        <span id="userName"></span>
-                    </a>
-                    <button id="logoutBtn" class="btn-logout" style="display: none;" title="Đăng xuất tài khoản">Đăng xuất</button>
+                    <!-- Dropdown tài khoản khi đã đăng nhập -->
+                    <div class="user-dropdown-wrap" id="userDropdownWrap" style="display: none;">
+                        <button type="button" class="user-dropdown-btn" id="userDropdownBtn" aria-expanded="false" title="Menu tài khoản">
+                            <span id="userAvatarWrap" class="user-avatar-wrap">👤</span>
+                            <span id="userName" class="user-name"></span>
+                            <span class="user-dropdown-caret">▾</span>
+                        </button>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="user-dropdown-header">
+                                <span class="user-dropdown-greeting">Xin chào,</span>
+                                <strong id="userDropdownFullName" class="user-dropdown-name">Người dùng</strong>
+                                <span id="userRoleBadge" class="user-role-badge">Khách hàng</span>
+                            </div>
+                            <div class="user-dropdown-divider"></div>
+                            <a href="./pages/profile.html" class="user-dropdown-item">
+                                <span class="dropdown-item-icon">👤</span> Thông tin tài khoản
+                            </a>
+                            <a href="./pages/orders.html" class="user-dropdown-item">
+                                <span class="dropdown-item-icon">📦</span> Đơn mua của tôi
+                            </a>
+                            <a href="./pages/wishlist.html" class="user-dropdown-item">
+                                <span class="dropdown-item-icon">❤️</span> Sách yêu thích
+                            </a>
+                            <a href="./pages/seller.html" id="sellerPortalLink" class="user-dropdown-item user-dropdown-seller" style="display: none;">
+                                <span class="dropdown-item-icon">🏪</span> Kênh Người Bán
+                            </a>
+                            <a href="./pages/admin.html" id="adminPortalLink" class="user-dropdown-item user-dropdown-admin" style="display: none;">
+                                <span class="dropdown-item-icon">👑</span> Trang Quản Trị
+                            </a>
+                            <div class="user-dropdown-divider"></div>
+                            <button type="button" id="logoutBtn" class="user-dropdown-item user-dropdown-logout">
+                                <span class="dropdown-item-icon">🚪</span> Đăng xuất
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Nút khi chưa đăng nhập -->
                     <div id="authLinks">
                         <a href="./pages/login.html" class="btn-auth btn-auth-outline">Đăng nhập</a>
                         <a href="./pages/dangky.html" class="btn-auth btn-auth-primary">Đăng ký</a>

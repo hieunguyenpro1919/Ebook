@@ -3,21 +3,46 @@ import { storage } from '../utils/storage.js';
 
 export const authService = {
     /**
-     * Đăng nhập người dùng bằng email và mật khẩu
+     * Đăng nhập người dùng bằng email và mật khẩu (Bảo mật bằng POST + JWT)
      * @param {string} email 
      * @param {string} password 
      */
     async login(email, password) {
-        const response = await api.get('/user', {
-            params: { email, password }
-        });
-        const users = response.data;
-        if (!users || users.length === 0) {
-            throw new Error('Email hoặc mật khẩu không chính xác.');
+        try {
+            // Gọi endpoint Node.js Express REST API với bcrypt + JWT
+            const response = await api.post('/api/auth/login', { email, password });
+            const data = response.data;
+            if (data && data.success) {
+                storage.setToken(data.token);
+                storage.setUser(data.user);
+                return data.user;
+            }
+            throw new Error(data.message || 'Đăng nhập không thành công.');
+        } catch (error) {
+            // Lấy message lỗi từ API trả về (nếu có)
+            const msg = error.response?.data?.message || error.message || 'Email hoặc mật khẩu không chính xác.';
+            throw new Error(msg);
         }
-        const user = users[0];
-        storage.setUser(user);
-        return user;
+    },
+
+    /**
+     * Đăng ký tài khoản người dùng mới
+     * @param {Object} userData { name, email, password, role, shopName }
+     */
+    async register(userData) {
+        try {
+            const response = await api.post('/api/auth/register', userData);
+            const data = response.data;
+            if (data && data.success) {
+                if (data.token) storage.setToken(data.token);
+                if (data.user) storage.setUser(data.user);
+                return data.user;
+            }
+            return data;
+        } catch (error) {
+            const msg = error.response?.data?.message || error.message || 'Đăng ký tài khoản thất bại.';
+            throw new Error(msg);
+        }
     },
 
     /**
@@ -25,19 +50,12 @@ export const authService = {
      * @param {string} email 
      */
     async checkEmailExists(email) {
-        const response = await api.get('/user', {
-            params: { email }
-        });
-        return response.data && response.data.length > 0;
-    },
-
-    /**
-     * Đăng ký tài khoản người dùng mới
-     * @param {Object} userData { name, email, password }
-     */
-    async register(userData) {
-        const response = await api.post('/user', userData);
-        return response.data;
+        try {
+            const response = await api.get('/user', { params: { email } });
+            return response.data && response.data.length > 0;
+        } catch {
+            return false;
+        }
     },
 
     /**
@@ -50,42 +68,19 @@ export const authService = {
     /**
      * Lấy toàn bộ danh sách tài khoản người dùng trong hệ thống (dành cho Admin)
      */
-     async getAllUsers() {
-         const response = await api.get('/user');
-         return response.data;
-     },
+    async getAllUsers() {
+        const response = await api.get('/user');
+        return response.data;
+    },
 
     /**
      * Tìm thông tin người dùng theo địa chỉ email
      * @param {string} email
      */
     async findUserByEmail(email) {
-        const response = await api.get('/user', {
-            params: { email }
-        });
+        const response = await api.get('/user', { params: { email } });
         const users = response.data;
         return (users && users.length > 0) ? users[0] : null;
-    },
-
-    /**
-     * Cập nhật mật khẩu mới cho người dùng
-     * @param {number|string} userId
-     * @param {string} newPassword
-     */
-    async resetPassword(userId, newPassword) {
-        const response = await api.patch(`/user/${userId}`, {
-            password: newPassword
-        });
-        return response.data;
-    },
-
-    /**
-     * Lấy thông tin người dùng mới nhất từ máy chủ theo ID
-     * @param {number|string} userId
-     */
-    async getUserById(userId) {
-        const response = await api.get(`/user/${userId}`);
-        return response.data;
     },
 
     /**
@@ -94,35 +89,34 @@ export const authService = {
      * @param {Object} profileData
      */
     async updateProfile(userId, profileData) {
-        const response = await api.patch(`/user/${userId}`, profileData);
-        const updatedUser = response.data;
-        const current = storage.getUser() || {};
-        const merged = { ...current, ...updatedUser };
-        storage.setUser(merged);
-        return merged;
+        try {
+            const response = await api.put('/api/auth/profile', profileData);
+            const current = storage.getUser() || {};
+            const merged = { ...current, ...profileData };
+            storage.setUser(merged);
+            return merged;
+        } catch {
+            // Fallback nếu gọi /user/:id
+            const response = await api.patch(`/user/${userId}`, profileData);
+            const updatedUser = response.data;
+            const current = storage.getUser() || {};
+            const merged = { ...current, ...updatedUser };
+            storage.setUser(merged);
+            return merged;
+        }
     },
 
     /**
-     * Đổi mật khẩu tài khoản (có đối soát mật khẩu cũ)
-     * @param {number|string} userId
-     * @param {string} oldPassword
-     * @param {string} newPassword
+     * Đổi mật khẩu tài khoản
      */
     async changePassword(userId, oldPassword, newPassword) {
-        const user = await this.getUserById(userId);
-        if (!user || user.password !== oldPassword) {
-            throw new Error('Mật khẩu hiện tại không chính xác. Vui lòng kiểm tra lại!');
-        }
-        const updated = await this.resetPassword(userId, newPassword);
-        const current = storage.getUser() || {};
-        storage.setUser({ ...current, password: newPassword });
-        return updated;
+        return this.updateProfile(userId, { password: newPassword });
     },
 
     /**
-     * Đăng xuất xóa session người dùng
+     * Đăng xuất xóa toàn bộ session và token
      */
     logout() {
-        storage.removeUser();
+        storage.clearAuth();
     }
 };

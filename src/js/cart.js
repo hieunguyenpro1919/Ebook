@@ -323,35 +323,35 @@ async function reduceStock(items) {
     }
 }
 
-// 7. Hoàn tất đơn hàng (Trừ kho, lưu vào DB và hiển thị modal thành công)
+// 7. Hoàn tất đơn hàng (Gọi Node.js Backend chạy Transaction Stored Procedure trừ kho & tạo đơn)
 async function completeOrder(orderData) {
     try {
-        await orderService.createOrder(orderData);
-    } catch (err) {
-        console.warn('Lưu đơn hàng vào server gặp sự cố, vẫn hoàn tất đơn trên giao diện:', err);
-    }
+        const createdOrder = await orderService.createOrder(orderData);
+        const finalCode = (createdOrder && createdOrder.orderCode) ? createdOrder.orderCode : orderData.orderCode;
 
-    // Trừ số lượng tồn kho của các sản phẩm vừa mua
-    await reduceStock(orderData.items);
+        // Xóa sạch giỏ hàng khi và chỉ khi server xác nhận đơn thành công
+        cartService.clearCart();
+        renderCart();
 
-    // Xóa sạch giỏ hàng
-    cartService.clearCart();
-    renderCart();
+        // Ẩn modal QR nếu đang mở
+        if (qrModal) qrModal.classList.remove('active');
 
-    // Ẩn modal QR nếu đang mở
-    if (qrModal) qrModal.classList.remove('active');
-
-    // Hiển thị modal đặt hàng thành công
-    if (successOrderCode) successOrderCode.textContent = orderData.orderCode;
-    const successModalDesc = document.querySelector('#successModalDesc');
-    if (successModalDesc) {
-        if (orderData.paymentMethod === 'VIETQR') {
-            successModalDesc.innerHTML = `🎉 <strong>Đã xác nhận thanh toán thành công!</strong><br>Đơn hàng <strong>#${orderData.orderCode}</strong> đã được hệ thống xác nhận thanh toán qua VietQR.<br>Trạng thái hiện tại: <span style="color: #0284c7; font-weight: 800;">🚚 Đang giao hàng</span>.<br>Bạn có thể xem chi tiết và xuất hóa đơn PDF bất cứ lúc nào.`;
-        } else {
-            successModalDesc.innerHTML = `Đơn hàng đã được tạo thành công ở trạng thái: <span style="color: #d97706; font-weight: 800;">⏳ Chờ xác nhận (COD)</span>.`;
+        // Hiển thị modal đặt hàng thành công
+        if (successOrderCode) successOrderCode.textContent = finalCode;
+        const successModalDesc = document.querySelector('#successModalDesc');
+        if (successModalDesc) {
+            if (orderData.paymentMethod === 'VIETQR') {
+                successModalDesc.innerHTML = `🎉 <strong>Đã xác nhận thanh toán thành công!</strong><br>Đơn hàng <strong>#${finalCode}</strong> đã được hệ thống xác nhận thanh toán qua VietQR.<br>Trạng thái hiện tại: <span style="color: #0284c7; font-weight: 800;">🚚 Đang giao hàng</span>.<br>Bạn có thể xem chi tiết và xuất hóa đơn PDF bất cứ lúc nào.`;
+            } else {
+                successModalDesc.innerHTML = `Đơn hàng <strong>#${finalCode}</strong> đã được tạo thành công ở trạng thái: <span style="color: #d97706; font-weight: 800;">⏳ Chờ xác nhận (COD)</span>.`;
+            }
         }
+        if (successModal) successModal.classList.add('active');
+    } catch (err) {
+        console.error('Lỗi khi đặt hàng:', err);
+        const errMsg = err.response?.data?.message || err.message || 'Không thể tạo đơn hàng. Vui lòng thử lại sau!';
+        alert(`❌ Đặt hàng thất bại: ${errMsg}`);
     }
-    if (successModal) successModal.classList.add('active');
 }
 
 // 8. Sự kiện modal QR: Bấm "Xác nhận chuyển khoản", xoay vòng 5s giả lập đối soát ngân hàng

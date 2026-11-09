@@ -1,4 +1,5 @@
 const USER_KEY = 'user';
+const TOKEN_KEY = 'token';
 
 /**
  * Module quản lý lưu trữ LocalStorage an toàn
@@ -20,5 +21,24 @@ export const storage = {
 
     removeUser() {
         localStorage.removeItem(USER_KEY);
+    },
+
+    getToken() {
+        return localStorage.getItem(TOKEN_KEY) || null;
+    },
+
+    setToken(token) {
+        if (token) {
+            localStorage.setItem(TOKEN_KEY, token);
+        }
+    },
+
+    removeToken() {
+        localStorage.removeItem(TOKEN_KEY);
+    },
+
+    clearAuth() {
+        localStorage.removeItem(USER_KEY);
+        localStorage.removeItem(TOKEN_KEY);
     }
 };

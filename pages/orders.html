@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn hàng của bạn - Trí Tuệ Book</title>
+    <link rel="stylesheet" href="../src/css/orders.css">
+    <link rel="stylesheet" href="../src/css/chatbot.css">
+    <script>
+        (function() {
+            var m = localStorage.getItem('theme_mode');
+            if (m === 'dark' || (!m && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+    <script type="importmap">
+    {
+      "imports": {
+        "axios": "https://esm.sh/axios@1.7.9"
+      }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container header-inner">
+            <a href="../index.html" class="brand-logo-container">
+                <img src="/src/assets/logo-light.svg" class="logo-light" alt="Trí Tuệ Book - Sáng">
+                <img src="/src/assets/logo-dark.svg" class="logo-dark" alt="Trí Tuệ Book - Tối">
+            </a>
+
+            <nav class="header-nav">
+                <button type="button" class="theme-switch-btn" title="Đổi giao diện Sáng / Tối" aria-label="Đổi giao diện">🌙</button>
+                <div class="notification-bell-wrap" id="headerNotificationBell" style="display: none;">
+                    <button type="button" class="btn-notification-bell" title="Thông báo đơn hàng" aria-label="Thông báo">
+                        🔔
+                        <span class="notification-badge" style="display: none;">0</span>
+                    </button>
+                    <div class="notification-dropdown hidden">
+                        <div class="notification-dropdown-header">
+                            <h4><span>🔔</span> Thông báo đơn hàng</h4>
+                            <button type="button" class="btn-mark-all-read">Đã đọc tất cả</button>
+                        </div>
+                        <div class="notification-list"></div>
+                        <div class="notification-dropdown-footer">
+                            <a href="./orders.html">Làm mới danh sách →</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="../index.html" class="nav-link">
+                    ← Trang chủ
+                </a>
+                <a href="./wishlist.html" class="nav-link" style="color: #ef4444; font-weight: 700;">
+                    ❤️ Yêu thích
+                </a>
+                <a href="./cart.html" class="nav-link">
+                    🛒 Giỏ hàng
+                </a>
+                <a href="./profile.html" class="nav-link" title="Xem hồ sơ cá nhân">
+                    <span id="userAvatarOrders" style="display: inline-flex; align-items: center;">👤</span>
+                    <span id="userNameText" style="font-size: 0.9rem; font-weight: 700; color: #4f46e5; margin-left: 4px;"></span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">
+                    📦 Lịch sử đơn hàng của bạn
+                </h1>
+
+                <div class="order-filter-bar">
+                    <input 
+                        type="search" 
+                        id="searchOrderInput" 
+                        class="search-order-input" 
+                        placeholder="Tìm theo mã đơn (DH...) hoặc SĐT..."
+                    >
+                </div>
+            </div>
+
+            <!-- Loading & Error -->
+            <div id="loading" style="text-align: center; padding: 40px; font-weight: 600; color: #64748b;">
+                ⏳ Đang tải danh sách đơn hàng...
+            </div>
+
+            <div id="error" style="display: none; text-align: center; padding: 20px; color: #dc2626; background: #fee2e2; border-radius: 12px; margin-bottom: 20px;">
+                Không thể tải danh sách đơn hàng. Vui lòng kiểm tra lại server.
+            </div>
+
+            <!-- Danh sách đơn hàng -->
+            <div id="ordersContainer" class="orders-container"></div>
+
+            <!-- Empty State -->
+            <div id="emptyOrders" class="empty-orders" style="display: none;">
+                <div class="empty-icon">📭</div>
+                <h3>Chưa có đơn hàng nào</h3>
+                <p>Bạn chưa đặt mua đơn hàng nào hoặc các đơn hàng chưa được tạo trên tài khoản này.</p>
+                <a href="../index.html" class="btn-shop-now">
+                    Khám phá tủ sách ngay →
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL ĐÁNH GIÁ SẢN PHẨM SAU KHI NHẬN HÀNG -->
+    <div id="reviewOrderModal" class="order-review-modal-overlay">
+        <div class="order-review-modal">
+            <div class="order-review-modal-header">
+                <h3>⭐ Đánh Giá Đơn Hàng Vừa Nhận</h3>
+                <button type="button" class="btn-close-review-modal" id="btnCloseReviewModal">&times;</button>
+            </div>
+            <p class="order-review-modal-desc">
+                Bạn đã nhận được sách nguyên vẹn chứ? Hãy để lại cảm nhận của bạn để chia sẻ cùng cộng đồng độc giả nhé!
+            </p>
+            <form id="orderReviewForm">
+                <div id="orderReviewItemsList" class="order-review-items-list">
+                    <!-- Nạp động các sản phẩm trong đơn vừa xác nhận -->
+                </div>
+                <div class="order-review-modal-actions">
+                    <button type="button" class="btn-skip-review" id="btnSkipReview">Để sau</button>
+                    <button type="submit" class="btn-confirm-review">🚀 Gửi Đánh Giá</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL CHI TIẾT & XUẤT HÓA ĐƠN PDF -->
+    <div id="invoiceModal" class="order-review-modal-overlay">
+        <div class="invoice-modal-content">
+            <div class="invoice-modal-toolbar no-print">
+                <div class="invoice-modal-title">
+                    <span class="inv-toolbar-icon">📄</span>
+                    <div>
+                        <h3>Chi Tiết & Hóa Đơn Bán Hàng</h3>
+                        <p id="invoiceModalSubtitle">Hóa đơn điện tử chính thức từ Trí Tuệ Book</p>
+                    </div>
+                </div>
+                <div class="invoice-modal-buttons">
+                    <button type="button" class="btn-inv-tool btn-inv-print" id="btnPrintInvoice" title="In ra máy in">
+                        🖨️ In hóa đơn
+                    </button>
+                    <button type="button" class="btn-inv-tool btn-inv-export" id="btnExportInvoicePdf" title="Tải file PDF về máy">
+                        📥 Xuất Hóa Đơn PDF
+                    </button>
+                    <button type="button" class="btn-close-invoice" id="btnCloseInvoiceModal" title="Đóng">&times;</button>
+                </div>
+            </div>
+
+            <!-- TỜ HÓA ĐƠN CHUẨN XUẤT PDF (INVOICE SHEET) -->
+            <div class="invoice-sheet-wrapper">
+                <div id="invoiceSheet" class="invoice-sheet">
+                    <!-- Được render tự động qua orders.js -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thư viện html2pdf bundle -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script type="module" src="../src/js/orders.js"></script>
+</body>
+</html>

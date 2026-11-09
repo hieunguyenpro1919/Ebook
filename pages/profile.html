@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ Sơ Cá Nhân - Trí Tuệ Book</title>
+    <link rel="stylesheet" href="../src/css/profile.css">
+    <link rel="stylesheet" href="../src/css/chatbot.css">
+    <script>
+        (function() {
+            var m = localStorage.getItem('theme_mode');
+            if (m === 'dark' || (!m && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+    <script type="importmap">
+    {
+      "imports": {
+        "axios": "https://esm.sh/axios@1.7.9"
+      }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- HEADER CHÍNH -->
+    <header class="header">
+        <div class="container header-inner">
+            <a href="../index.html" class="brand-logo-container">
+                <img src="/src/assets/logo-light.svg" class="logo-light" alt="Trí Tuệ Book - Sáng">
+                <img src="/src/assets/logo-dark.svg" class="logo-dark" alt="Trí Tuệ Book - Tối">
+            </a>
+
+            <nav class="header-nav">
+                <button type="button" class="theme-switch-btn" title="Đổi giao diện Sáng / Tối" aria-label="Đổi giao diện">🌙</button>
+                <div class="notification-bell-wrap" id="headerNotificationBell" style="display: none;">
+                    <button type="button" class="btn-notification-bell" title="Thông báo đơn hàng" aria-label="Thông báo">
+                        🔔
+                        <span class="notification-badge" style="display: none;">0</span>
+                    </button>
+                    <div class="notification-dropdown hidden">
+                        <div class="notification-dropdown-header">
+                            <h4><span>🔔</span> Thông báo đơn hàng</h4>
+                            <button type="button" class="btn-mark-all-read">Đã đọc tất cả</button>
+                        </div>
+                        <div class="notification-list"></div>
+                        <div class="notification-dropdown-footer">
+                            <a href="./orders.html">Xem đơn hàng của bạn →</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="../index.html" class="nav-link">← Trang chủ</a>
+                <a href="./wishlist.html" class="nav-link" style="color: #ef4444; font-weight: 700;">❤️ Yêu thích</a>
+                <a href="./orders.html" class="nav-link">📦 Đơn hàng</a>
+                <a href="./cart.html" class="nav-link">🛒 Giỏ hàng</a>
+                <button type="button" id="btnLogoutTop" class="btn-logout-nav" title="Đăng xuất tài khoản">Đăng xuất</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="profile-main-wrapper">
+        <div class="container">
+            
+            <!-- THÔNG BÁO TOAST / ALERT -->
+            <div id="profileAlert" class="alert-box hidden" role="alert"></div>
+
+            <!-- TIÊU ĐỀ TRANG -->
+            <div class="profile-page-header">
+                <div>
+                    <h1 class="page-title">👤 Hồ Sơ & Thông Tin Tài Khoản</h1>
+                    <p class="page-subtitle">Quản lý thông tin cá nhân, ảnh đại diện và bảo mật tài khoản của bạn</p>
+                </div>
+                <div class="page-actions-right">
+                    <span id="roleBadgeTop" class="badge-role">Khách hàng</span>
+                </div>
+            </div>
+
+            <!-- LAYOUT HỒ SƠ: SIDEBAR + MAIN TABS -->
+            <div class="profile-grid">
+                
+                <!-- CỘT TRÁI: THẺ THÔNG TIN TỔNG QUAN & AVATAR -->
+                <aside class="profile-sidebar">
+                    <div class="profile-card user-summary-card">
+                        <!-- VÙNG ẢNH ĐẠI DIỆN -->
+                        <div class="avatar-wrapper">
+                            <div class="avatar-circle" id="avatarCircle">
+                                <img id="userAvatarImg" src="" alt="Avatar" class="avatar-img hidden">
+                                <span id="avatarInitials" class="avatar-initials">?</span>
+                            </div>
+                            <label for="avatarFileInput" class="avatar-upload-badge" title="Tải ảnh đại diện từ thiết bị">
+                                📷
+                            </label>
+                            <input type="file" id="avatarFileInput" accept="image/*" class="visually-hidden">
+                        </div>
+
+                        <!-- HÀNH ĐỘNG ẢNH ĐẠI DIỆN -->
+                        <div class="avatar-actions">
+                            <button type="button" id="btnUploadAvatar" class="btn-subtle btn-xs">
+                                📁 Tải ảnh lên
+                            </button>
+                            <button type="button" id="btnAvatarUrl" class="btn-subtle btn-xs">
+                                🔗 Nhập URL
+                            </button>
+                            <button type="button" id="btnRemoveAvatar" class="btn-subtle btn-xs btn-subtle-danger" title="Xóa ảnh về mặc định">
+                                🗑️ Gỡ ảnh
+                            </button>
+                        </div>
+
+                        <!-- MODAL NHẬP LINK URL AVATAR (ẨN/HIỆN) -->
+                        <div id="avatarUrlBox" class="avatar-url-box hidden">
+                            <input type="url" id="inputAvatarUrl" class="form-input text-xs" placeholder="https://domain.com/photo.jpg">
+                            <div class="url-box-actions">
+                                <button type="button" id="btnApplyAvatarUrl" class="btn btn-primary btn-xs">Áp dụng</button>
+                                <button type="button" id="btnCancelAvatarUrl" class="btn btn-secondary btn-xs">Hủy</button>
+                            </div>
+                        </div>
+
+                        <h2 class="user-display-name" id="userDisplayName">Đang tải...</h2>
+                        <div class="user-email-text" id="userEmailText">email@example.com</div>
+                        <div class="user-status-tag">
+                            <span class="status-dot"></span> Đang hoạt động
+                        </div>
+
+                        <hr class="card-divider">
+
+                        <!-- THỐNG KÊ NHANH -->
+                        <div class="user-stats-list">
+                            <div class="stat-item">
+                                <span class="stat-label">Vai trò:</span>
+                                <strong class="stat-value" id="userRoleDetail">Thành viên</strong>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Số đơn đã đặt:</span>
+                                <strong class="stat-value" id="userOrdersCount">0 đơn</strong>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Sách yêu thích:</span>
+                                <strong class="stat-value" id="userWishlistCount" style="color: #ef4444;">0 cuốn</strong>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Trạng thái xác thực:</span>
+                                <span class="stat-value text-success">✓ Đã xác thực</span>
+                            </div>
+                        </div>
+
+                        <hr class="card-divider">
+
+                        <!-- MENU CHUYỂN TAB -->
+                        <nav class="sidebar-tab-nav">
+                            <button type="button" class="sidebar-nav-item active" data-tab="tab-info">
+                                <span>👤</span> Thông tin cá nhân
+                            </button>
+                            <button type="button" class="sidebar-nav-item" data-tab="tab-password">
+                                <span>🔒</span> Đổi mật khẩu
+                            </button>
+                            <button type="button" class="sidebar-nav-item" data-tab="tab-shortcuts">
+                                <span>⚡</span> Lối tắt & Quyền hạn
+                            </button>
+                        </nav>
+                    </div>
+                </aside>
+
+                <!-- CỘT PHẢI: NỘI DUNG TỪNG TAB -->
+                <section class="profile-content">
+
+                    <!-- TAB 1: THÔNG TIN CÁ NHÂN -->
+                    <div id="tab-info" class="tab-pane active">
+                        <div class="profile-card">
+                            <div class="tab-header">
+                                <h3 class="tab-title">Thông tin cá nhân</h3>
+                                <p class="tab-desc">Cập nhật họ tên, số điện thoại và địa chỉ giao hàng nhận sách của bạn.</p>
+                            </div>
+
+                            <form id="profileForm" class="profile-form" novalidate>
+                                <div class="form-row form-row-2">
+                                    <div class="form-group">
+                                        <label for="inputName" class="form-label">Họ và tên <span class="req">*</span></label>
+                                        <input type="text" id="inputName" class="form-input" placeholder="Ví dụ: Nguyễn Văn A" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputEmail" class="form-label">Địa chỉ Email</label>
+                                        <input type="email" id="inputEmail" class="form-input" readonly disabled title="Email tài khoản không thể chỉnh sửa">
+                                        <span class="field-hint">Email dùng làm tên đăng nhập tài khoản.</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-row form-row-2">
+                                    <div class="form-group">
+                                        <label for="inputPhone" class="form-label">Số điện thoại liên hệ</label>
+                                        <input type="tel" id="inputPhone" class="form-input" placeholder="Ví dụ: 0912 345 678">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="selectGender" class="form-label">Giới tính</label>
+                                        <select id="selectGender" class="form-input form-select">
+                                            <option value="">-- Chưa chọn --</option>
+                                            <option value="male">Nam</option>
+                                            <option value="female">Nữ</option>
+                                            <option value="other">Khác</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row form-row-2">
+                                    <div class="form-group">
+                                        <label for="inputDob" class="form-label">Ngày sinh</label>
+                                        <input type="date" id="inputDob" class="form-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputRoleDisplay" class="form-label">Cấp bậc tài khoản</label>
+                                        <input type="text" id="inputRoleDisplay" class="form-input" readonly disabled>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputAddress" class="form-label">Địa chỉ giao hàng mặc định</label>
+                                    <input type="text" id="inputAddress" class="form-input" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố">
+                                    <span class="field-hint">Địa chỉ này sẽ tự động điền khi bạn tiến hành thanh toán giỏ hàng.</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputBio" class="form-label">Giới thiệu ngắn / Tiểu sử</label>
+                                    <textarea id="inputBio" class="form-input form-textarea" rows="3" placeholder="Chia sẻ một vài điều về thể loại sách yêu thích hoặc sở thích đọc sách của bạn..."></textarea>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" id="btnSaveProfile" class="btn btn-primary">
+                                        💾 Lưu thay đổi hồ sơ
+                                    </button>
+                                    <button type="reset" id="btnResetProfile" class="btn btn-secondary">
+                                        ↺ Hoàn tác
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: ĐỔI MẬT KHẨU -->
+                    <div id="tab-password" class="tab-pane">
+                        <div class="profile-card">
+                            <div class="tab-header">
+                                <h3 class="tab-title">Đổi mật khẩu bảo vệ</h3>
+                                <p class="tab-desc">Để bảo mật tài khoản, không nên chia sẻ mật khẩu của bạn cho bất kỳ ai.</p>
+                            </div>
+
+                            <form id="passwordForm" class="profile-form" novalidate>
+                                <div class="form-group">
+                                    <label for="inputOldPassword" class="form-label">Mật khẩu hiện tại <span class="req">*</span></label>
+                                    <div class="password-input-wrap">
+                                        <input type="password" id="inputOldPassword" class="form-input" placeholder="Nhập mật khẩu hiện tại của bạn" required>
+                                        <button type="button" class="btn-toggle-eye" data-target="inputOldPassword" title="Hiện/Ẩn mật khẩu">👁️</button>
+                                    </div>
+                                </div>
+
+                                <div class="form-row form-row-2">
+                                    <div class="form-group">
+                                        <label for="inputNewPassword" class="form-label">Mật khẩu mới <span class="req">*</span></label>
+                                        <div class="password-input-wrap">
+                                            <input type="password" id="inputNewPassword" class="form-input" placeholder="Mật khẩu mới (tối thiểu 6 ký tự)" required minlength="6">
+                                            <button type="button" class="btn-toggle-eye" data-target="inputNewPassword" title="Hiện/Ẩn mật khẩu">👁️</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="inputConfirmPassword" class="form-label">Xác nhận mật khẩu mới <span class="req">*</span></label>
+                                        <div class="password-input-wrap">
+                                            <input type="password" id="inputConfirmPassword" class="form-input" placeholder="Nhập lại mật khẩu mới" required>
+                                            <button type="button" class="btn-toggle-eye" data-target="inputConfirmPassword" title="Hiện/Ẩn mật khẩu">👁️</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="password-requirements">
+                                    <div class="req-title">Gợi ý mật khẩu an toàn:</div>
+                                    <ul class="req-list">
+                                        <li>Tối thiểu từ 6 ký tự trở lên.</li>
+                                        <li>Nên kết hợp chữ cái, số và ký tự đặc biệt (!@#$%).</li>
+                                        <li>Không dùng lại mật khẩu của các dịch vụ khác.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" id="btnChangePassword" class="btn btn-primary">
+                                        🔑 Cập nhật mật khẩu
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: LỐI TẮT & PHÂN QUYỀN -->
+                    <div id="tab-shortcuts" class="tab-pane">
+                        <div class="profile-card">
+                            <div class="tab-header">
+                                <h3 class="tab-title">Lối tắt & Quyền hạn hệ thống</h3>
+                                <p class="tab-desc">Truy cập nhanh vào các tính năng tương ứng với quyền hạn tài khoản của bạn.</p>
+                            </div>
+
+                            <div class="shortcuts-grid">
+                                <!-- Khách hàng / Đơn hàng -->
+                                <div class="shortcut-card">
+                                    <div class="shortcut-icon">📦</div>
+                                    <div class="shortcut-info">
+                                        <h4>Lịch sử đơn hàng</h4>
+                                        <p>Tra cứu tình trạng giao hàng, tiến độ vận chuyển và đánh giá đơn hàng đã mua.</p>
+                                    </div>
+                                    <a href="./orders.html" class="btn btn-secondary btn-sm">Xem đơn hàng →</a>
+                                </div>
+
+                                <!-- Giỏ hàng -->
+                                <div class="shortcut-card">
+                                    <div class="shortcut-icon">🛒</div>
+                                    <div class="shortcut-info">
+                                        <h4>Giỏ hàng cá nhân</h4>
+                                        <p>Xem danh sách các cuốn sách đã lưu và chuẩn bị thanh toán.</p>
+                                    </div>
+                                    <a href="./cart.html" class="btn btn-secondary btn-sm">Đến giỏ hàng →</a>
+                                </div>
+
+                                <!-- Sách yêu thích -->
+                                <div class="shortcut-card">
+                                    <div class="shortcut-icon">❤️</div>
+                                    <div class="shortcut-info">
+                                        <h4>Sách Yêu Thích (Wishlist)</h4>
+                                        <p>Theo dõi các cuốn sách bạn quan tâm, lưu để so sánh giá và thêm nhanh vào giỏ hàng.</p>
+                                    </div>
+                                    <a href="./wishlist.html" class="btn btn-secondary btn-sm">Xem sách yêu thích →</a>
+                                </div>
+
+                                <!-- Tin nhắn nội bộ -->
+                                <div class="shortcut-card">
+                                    <div class="shortcut-icon">💬</div>
+                                    <div class="shortcut-info">
+                                        <h4>Hộp Thư & Tin Nhắn Nội Bộ</h4>
+                                        <p>Trao đổi trực tiếp với các Shop bán sách và nhận hỗ trợ từ Quản trị viên sàn.</p>
+                                    </div>
+                                    <button type="button" class="btn btn-secondary btn-sm" id="btnOpenProfileChat">Mở tin nhắn →</button>
+                                </div>
+
+                                <!-- Người bán (Chỉ hiện cho Seller & Admin) -->
+                                <div id="sellerShortcutCard" class="shortcut-card shortcut-seller hidden">
+                                    <div class="shortcut-icon">🏪</div>
+                                    <div class="shortcut-info">
+                                        <h4>Kênh Người Bán (Seller Portal)</h4>
+                                        <p>Đăng bán sách, bổ sung tồn kho, quản lý đơn hàng khách mua và thống kê doanh thu gian hàng.</p>
+                                    </div>
+                                    <a href="./seller.html" class="btn btn-seller btn-sm">Vào Kênh Bán Hàng →</a>
+                                </div>
+
+                                <!-- Quản trị viên (Chỉ hiện cho Admin) -->
+                                <div id="adminShortcutCard" class="shortcut-card shortcut-admin hidden">
+                                    <div class="shortcut-icon">👑</div>
+                                    <div class="shortcut-info">
+                                        <h4>Trang Quản Trị Hệ Thống (Admin Panel)</h4>
+                                        <p>Báo cáo doanh thu toàn sàn, quản lý người dùng, duyệt gian hàng, thiết lập Flash Sale và quản lý danh mục.</p>
+                                    </div>
+                                    <a href="./admin.html" class="btn btn-admin btn-sm">Vào Admin Panel →</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="profile-footer">
+        <div class="container footer-inner">
+            <p>© 2026 Trí Tuệ Book - Nền tảng mua sắm sách trực tuyến hiện đại.</p>
+        </div>
+    </footer>
+
+    <script type="module" src="../src/js/profile.js"></script>
+</body>
+</html>
+

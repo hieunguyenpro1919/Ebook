@@ -1,0 +1,22 @@
+{
+  "name": "nhasach",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "server": "json-server db.json --port 3000"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "bcryptjs": "^3.0.3",
+    "html2pdf.js": "^0.14.0",
+    "mysql2": "^3.24.6",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "json-server": "^0.17.4",
+    "vite": "^6.2.0"
+  }
+}

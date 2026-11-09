@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng - Trí Tuệ Book</title>
+    <link rel="stylesheet" href="../src/css/cart.css">
+    <link rel="stylesheet" href="../src/css/chatbot.css">
+    <script>
+        (function() {
+            var m = localStorage.getItem('theme_mode');
+            if (m === 'dark' || (!m && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+    <script type="importmap">
+    {
+      "imports": {
+        "axios": "https://esm.sh/axios@1.7.9"
+      }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container header-inner">
+            <a href="../index.html" class="brand-logo-container">
+                <img src="/src/assets/logo-light.svg" class="logo-light" alt="Trí Tuệ Book - Sáng">
+                <img src="/src/assets/logo-dark.svg" class="logo-dark" alt="Trí Tuệ Book - Tối">
+            </a>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button type="button" class="theme-switch-btn" title="Đổi giao diện Sáng / Tối" aria-label="Đổi giao diện">🌙</button>
+                <div class="notification-bell-wrap" id="headerNotificationBell" style="display: none;">
+                    <button type="button" class="btn-notification-bell" title="Thông báo đơn hàng" aria-label="Thông báo">
+                        🔔
+                        <span class="notification-badge" style="display: none;">0</span>
+                    </button>
+                    <div class="notification-dropdown hidden">
+                        <div class="notification-dropdown-header">
+                            <h4><span>🔔</span> Thông báo đơn hàng</h4>
+                            <button type="button" class="btn-mark-all-read">Đã đọc tất cả</button>
+                        </div>
+                        <div class="notification-list"></div>
+                        <div class="notification-dropdown-footer">
+                            <a href="./orders.html">Xem đơn hàng của bạn →</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="./profile.html" class="back-link" title="Xem hồ sơ cá nhân" style="font-weight: 700;">
+                    👤 Hồ sơ
+                </a>
+                <a href="./wishlist.html" class="back-link" title="Xem sách yêu thích" style="color: #ef4444; font-weight: 700;">
+                    ❤️ Yêu thích
+                </a>
+                <a href="./orders.html" class="back-link" style="color: #4f46e5; font-weight: 700;">
+                    📦 Đơn hàng của bạn
+                </a>
+                <a href="../index.html" class="back-link">
+                    ← Tiếp tục mua sách
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+        <div class="container">
+            <h1 class="page-title">
+                🛒 Giỏ hàng của bạn (<span id="cartTotalItemsCount">0</span> món)
+            </h1>
+
+            <div class="cart-layout">
+                <!-- CỘT TRÁI: DANH SÁCH SẢN PHẨM -->
+                <div class="cart-items-card">
+                    <div class="cart-header-row" id="cartHeaderRow">
+                        <span class="cart-header-title">Danh sách sách đã chọn</span>
+                        <button class="btn-clear-cart" id="btnClearCart" type="button">
+                            🗑️ Xóa tất cả
+                        </button>
+                    </div>
+
+                    <!-- Danh sách các mặt hàng trong giỏ -->
+                    <div id="cartList"></div>
+
+                    <!-- Giao diện khi giỏ hàng trống -->
+                    <div id="emptyCart" class="empty-cart" style="display: none;">
+                        <div class="empty-cart-icon">🛍️</div>
+                        <h3>Giỏ hàng của bạn đang trống</h3>
+                        <p>Hãy khám phá thêm hàng ngàn tựa sách hay đang có mặt tại Trí Tuệ Book nhé!</p>
+                        <a href="../index.html" class="btn-continue-shopping">
+                            Khám phá tủ sách ngay →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CỘT PHẢI: TÓM TẮT ĐƠN HÀNG & THANH TOÁN -->
+                <div class="summary-card" id="summaryCard">
+                    <h2 class="summary-title">Tóm tắt đơn hàng</h2>
+
+                    <div class="summary-row">
+                        <span>Tiền sách tạm tính:</span>
+                        <strong id="subTotal">0 ₫</strong>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Phí vận chuyển:</span>
+                        <span id="shippingFee">30.000 ₫</span>
+                    </div>
+
+                    <!-- MÃ GIẢM GIÁ / VOUCHER -->
+                    <div class="coupon-box-wrapper">
+                        <label for="couponInput" class="coupon-label">🎟️ Mã giảm giá / Voucher</label>
+                        <div class="coupon-input-group">
+                            <input type="text" id="couponInput" placeholder="Nhập mã (FREESHIP, SALE10...)" autocomplete="off">
+                            <button type="button" id="btnApplyCoupon" class="btn-apply-coupon">Áp dụng</button>
+                            <button type="button" id="btnRemoveCoupon" class="btn-remove-coupon hidden" title="Gỡ mã giảm giá">✕</button>
+                        </div>
+                        <p id="couponFeedback" class="coupon-feedback hidden"></p>
+
+                        <!-- Gợi ý mã có sẵn -->
+                        <div class="coupon-quick-suggestions" id="couponSuggestions">
+                            <!-- Render bằng JS -->
+                        </div>
+                    </div>
+
+                    <!-- HÀNG HIỂN THỊ TIỀN GIẢM GIÁ (ẨN/HIỆN KHI ÁP DỤNG THÀNH CÔNG) -->
+                    <div class="summary-row discount-row hidden" id="discountRow">
+                        <span>Giảm giá (<span id="appliedCouponCode"></span>):</span>
+                        <strong id="discountAmount">-0 ₫</strong>
+                    </div>
+
+                    <div class="summary-row total-row">
+                        <span>Tổng thanh toán:</span>
+                        <span class="total-amount" id="totalPay">0 ₫</span>
+                    </div>
+
+                    <!-- FORM ĐẶT HÀNG -->
+                    <form id="checkoutForm" class="checkout-form">
+                        <h3 class="checkout-subtitle">Thông tin giao hàng</h3>
+
+                        <div class="form-group">
+                            <label for="receiverName">Họ và tên người nhận *</label>
+                            <input type="text" id="receiverName" placeholder="ví dụ: Nguyễn Văn A" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="receiverPhone">Số điện thoại *</label>
+                            <input type="tel" id="receiverPhone" placeholder="ví dụ: 0912345678" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="receiverAddress">Địa chỉ nhận sách *</label>
+                            <textarea id="receiverAddress" rows="2" placeholder="Số nhà, tên đường, phường/xã, quận/huyện..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="receiverNote">Ghi chú đơn hàng (nếu có)</label>
+                            <input type="text" id="receiverNote" placeholder="ví dụ: Giao giờ hành chính">
+                        </div>
+
+                        <h3 class="checkout-subtitle" style="margin-top: 18px;">Phương thức thanh toán</h3>
+
+                        <div class="payment-options">
+                            <label class="payment-label">
+                                <input type="radio" name="paymentMethod" value="COD" checked>
+                                <span>💵 Thanh toán tiền mặt khi nhận hàng (COD)</span>
+                            </label>
+
+                            <label class="payment-label">
+                                <input type="radio" name="paymentMethod" value="VIETQR">
+                                <span>📲 Quét mã QR chuyển khoản (VietQR)</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-checkout" id="btnSubmitOrder">
+                            Xác nhận đặt hàng →
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL THANH TOÁN VIETQR -->
+    <div class="modal-overlay" id="qrModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Quét Mã VietQR Thanh Toán</h3>
+                <p style="font-size: 0.9rem; color: #64748b;">Mở app ngân hàng bất kỳ để quét mã thanh toán</p>
+            </div>
+
+            <div class="qr-box" id="qrBox">
+                <img id="qrImage" class="qr-img" src="" alt="Mã VietQR thanh toán">
+                <div class="qr-info">
+                    <p>🏦 Ngân hàng: <strong>MBBank (Ngân hàng Quân Đội)</strong></p>
+                    <p>💳 Số tài khoản: <strong>0901234567</strong></p>
+                    <p>👤 Chủ tài khoản: <strong>NHA SACH TRI TUE</strong></p>
+                    <p>💰 Số tiền: <strong id="qrAmountText" style="color: #dc2626;">0 ₫</strong></p>
+                    <p>📝 Nội dung: <strong id="qrContentText" style="color: #4f46e5;">DH...</strong></p>
+                </div>
+            </div>
+
+            <!-- KHUNG GIẢ LẬP XÁC THỰC NGÂN HÀNG (XOAY VÒNG 5 GIÂY) -->
+            <div id="qrVerifyingBox" class="qr-verifying-box" style="display: none;">
+                <div class="bank-spinner"></div>
+                <h4 style="font-size: 1.05rem; font-weight: 800; color: #1e1b4b; margin: 8px 0 4px 0;">Đang xác thực thanh toán...</h4>
+                <p id="qrVerifyingStatusText" style="font-size: 0.85rem; color: #475569; margin-bottom: 6px;">Đang kết nối cổng ngân hàng đối soát giao dịch</p>
+                <div class="verify-progress-bar">
+                    <div id="verifyProgressFill" class="verify-progress-fill"></div>
+                </div>
+                <span id="verifyCountdownText" style="font-size: 0.8rem; font-weight: 700; color: #15803d;">Vui lòng chờ trong giây lát (5s)...</span>
+            </div>
+
+            <button type="button" class="btn-confirm-paid" id="btnConfirmPaid">
+                🔄 Xác nhận chuyển khoản
+            </button>
+            <button type="button" class="btn-close-modal" id="btnCloseQr">
+                Hủy / Đóng lại
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL ĐẶT HÀNG THÀNH CÔNG -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <div style="font-size: 3.5rem; margin-bottom: 12px;">🎉</div>
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; color: #10b981;">
+                Đặt Hàng Thành Công!
+            </h3>
+            <p id="successModalDesc" style="color: #64748b; margin-bottom: 16px;">
+                Cảm ơn bạn đã mua sách tại Trí Tuệ Book. Đơn hàng của bạn đang được xử lý và đóng gói.
+            </p>
+            <div style="background: #f8fafc; padding: 14px; border-radius: 10px; border: 1px dashed #cbd5e1; margin-bottom: 24px;">
+                <p style="font-size: 0.95rem; color: #475569;">Mã đơn hàng: <strong id="successOrderCode" style="color: #4f46e5;">...</strong></p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="./orders.html" class="btn-checkout" style="width: 100%; text-decoration: none; justify-content: center;">
+                    📦 Xem đơn hàng vừa đặt
+                </a>
+                <a href="../index.html" class="btn-continue-shopping" style="width: 100%; justify-content: center;">
+                    Quay về trang chủ tiếp tục mua sắm
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="../src/js/cart.js"></script>
+</body>
+</html>

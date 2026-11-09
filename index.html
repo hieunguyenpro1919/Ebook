@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhà Sách Trí Tuệ - Mua Sách Online</title>
+    <link rel="stylesheet" href="./src/css/style.css">
+    <link rel="stylesheet" href="./src/css/chatbot.css">
+    <script>
+        (function() {
+            var m = localStorage.getItem('theme_mode');
+            if (m === 'dark' || (!m && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+    <script type="importmap">
+    {
+      "imports": {
+        "axios": "https://esm.sh/axios@1.7.9"
+      }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="./index.html" class="brand-logo-container">
+                <img src="/src/assets/logo-light.svg" class="logo-light" alt="Trí Tuệ Book - Sáng">
+                <img src="/src/assets/logo-dark.svg" class="logo-dark" alt="Trí Tuệ Book - Tối">
+            </a>
+
+            <nav class="menu" id="mainMenu">
+                <!-- Render hoàn toàn động từ db.json qua menuService -->
+            </nav>
+
+            <div class="header-actions">
+                <button type="button" class="theme-switch-btn" title="Đổi giao diện Sáng / Tối" aria-label="Đổi giao diện">🌙</button>
+
+                <div class="user-status" id="userStatus">
+                    <!-- Sẽ hiển thị qua JS nếu đã đăng nhập hoặc chưa -->
+                    <a href="./pages/admin.html" id="adminLink" class="btn-auth btn-admin-badge" style="display: none;" title="Vào trang quản trị">
+                        ⚙️ Quản trị
+                    </a>
+                    <a href="./pages/profile.html" id="userText" class="user-badge" style="display: none; text-decoration: none; cursor: pointer;" title="Xem và chỉnh sửa hồ sơ tài khoản">
+                        <span id="userAvatarWrap" style="display: inline-flex; align-items: center;">👤</span>
+                        <span id="userName"></span>
+                    </a>
+                    <button id="logoutBtn" class="btn-logout" style="display: none;" title="Đăng xuất tài khoản">Đăng xuất</button>
+                    <div id="authLinks">
+                        <a href="./pages/login.html" class="btn-auth btn-auth-outline">Đăng nhập</a>
+                        <a href="./pages/dangky.html" class="btn-auth btn-auth-primary">Đăng ký</a>
+                    </div>
+                </div>
+
+                <!-- CHUÔNG THÔNG BÁO ĐƠN HÀNG -->
+                <div class="notification-bell-wrap" id="headerNotificationBell" style="display: none;">
+                    <button type="button" class="btn-notification-bell" title="Thông báo đơn hàng" aria-label="Thông báo">
+                        🔔
+                        <span class="notification-badge" style="display: none;">0</span>
+                    </button>
+                    <div class="notification-dropdown hidden">
+                        <div class="notification-dropdown-header">
+                            <h4><span>🔔</span> Thông báo đơn hàng</h4>
+                            <button type="button" class="btn-mark-all-read">Đã đọc tất cả</button>
+                        </div>
+                        <div class="notification-list">
+                            <!-- Render động bởi notificationBell.js -->
+                        </div>
+                        <div class="notification-dropdown-footer">
+                            <a href="./pages/orders.html">Xem tất cả đơn hàng →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="./pages/wishlist.html" class="cart-icon wishlist-icon-header" id="wishlistButton" title="Xem sách yêu thích" style="text-decoration: none;">
+                    ❤️
+                    <span id="wishlistCount" class="cart-badge wishlist-badge" style="background: #ef4444;">0</span>
+                </a>
+
+                <a href="./pages/cart.html" class="cart-icon" id="cartButton" title="Xem giỏ hàng" style="text-decoration: none;">
+                    🛒
+                    <span id="cartCount" class="cart-badge">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO BANNER -->
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="hero-text">
+                <span class="hero-tag">✨ Khám phá kho tàng tri thức</span>
+                <h1>Nuôi dưỡng tâm hồn <br><span>với những trang sách hay</span></h1>
+                <p>Khám phá hàng ngàn tựa sách chọn lọc từ văn học, kỹ năng, công nghệ tới kinh tế. Giao hàng tận tay, đồng hành cùng bạn trên con đường phát triển.</p>
+                <a href="#products" class="hero-btn">
+                    Khám phá sách ngay →
+                </a>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-card-stack">
+                    <a href="./pages/product-detail.html?id=1" id="heroBookLink" class="hero-book-card" title="Xem chi tiết cuốn sách">
+                        <img id="heroBookImg" src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=800&q=80" alt="Sách nổi bật">
+                        <div class="hero-book-badge">
+                            <span class="title" id="heroBookTitle">Sách chọn lọc</span>
+                            <div class="bottom">
+                                <span class="price" id="heroBookPrice">Xem ngay</span>
+                                <span class="tag">Chi tiết →</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SẢN PHẨM ĐANG SALE (HIỂN THỊ TRONG CÁC NGÀY DIỄN RA ĐỢT SALE) -->
+    <section id="saleProductsSection" class="sale-products-section" style="display: none;">
+        <div class="container">
+            <div class="sale-section-header">
+                <div>
+                    <span class="sub-badge-sale">⚡ Giờ Vàng Giá Sốc</span>
+                    <h2 class="section-title sale-section-title" id="saleCampaignTitle">Sách Đang Giảm Giá</h2>
+                    <p class="section-subtitle" id="saleCampaignSubtitle">Ưu đãi giảm giá đặc biệt trong ngày hội đọc sách</p>
+                </div>
+                <div class="sale-countdown-box" id="saleCountdownContainer">
+                    <div class="countdown-badge-title">
+                        <span class="live-pulse"></span>
+                        <span id="saleCountdownStatusText">FLASH SALE ĐANG DIỄN RA</span>
+                    </div>
+                    <div class="countdown-digits-wrap" id="saleCountdownClock">
+                        <div class="countdown-digit-cell" id="clockDaysUnit" style="display: none;">
+                            <span class="digit-value" id="clockDays">00</span>
+                            <span class="digit-text">Ngày</span>
+                        </div>
+                        <span class="digit-divider" id="clockDaysSep" style="display: none;">:</span>
+                        <div class="countdown-digit-cell">
+                            <span class="digit-value" id="clockHours">08</span>
+                            <span class="digit-text">Giờ</span>
+                        </div>
+                        <span class="digit-divider">:</span>
+                        <div class="countdown-digit-cell">
+                            <span class="digit-value" id="clockMinutes">00</span>
+                            <span class="digit-text">Phút</span>
+                        </div>
+                        <span class="digit-divider">:</span>
+                        <div class="countdown-digit-cell">
+                            <span class="digit-value" id="clockSeconds">00</span>
+                            <span class="digit-text">Giây</span>
+                        </div>
+                    </div>
+                    <div class="sale-date-subtext">
+                        <span id="saleDateRangeText">Đang diễn ra</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="saleProductList" class="new-product-grid">
+                <!-- Render các sản phẩm đang sale bằng home.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- SẢN PHẨM MỚI (TỐI ĐA 4 SẢN PHẨM MỚI NHẤT THEO NGÀY NHẬP) -->
+    <section id="newProductsSection" class="new-products-section">
+        <div class="container">
+            <div class="new-section-header">
+                <div>
+                    <span class="sub-badge-fire">✨ Mới Cập Bến</span>
+                    <h2 class="section-title">Sách Mới Nhập Kho</h2>
+                    <p class="section-subtitle">Tuyển chọn 4 tác phẩm mới nhất vừa được nhập về kệ sách Trí Tuệ</p>
+                </div>
+            </div>
+
+            <div id="newProductList" class="new-product-grid">
+                <!-- Render 4 sản phẩm mới nhất bằng home.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- SẢN PHẨM NỔI BẬT (TỐI ĐA 4 SẢN PHẨM BÁN CHẠY / TRUY CẬP NHIỀU NHẤT) -->
+    <section id="hotProductsSection" class="hot-products-section">
+        <div class="container">
+            <div class="hot-section-header">
+                <div>
+                    <span class="sub-badge-hot">🔥 Xu Hướng Nổi Bật</span>
+                    <h2 class="section-title">Sách Nổi Bật & Bán Chạy</h2>
+                    <p class="section-subtitle">Top 4 tác phẩm dẫn đầu về lượt mua và đánh giá tích cực từ độc giả</p>
+                </div>
+            </div>
+
+            <div id="hotProductList" class="new-product-grid">
+                <!-- Render 4 sản phẩm nổi bật nhất bằng home.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORY TABS & SEARCH -->
+    <section class="category-section">
+        <div class="container">
+            <div class="filter-bar">
+                <div>
+                    <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--dark); margin-bottom: 4px;">Khám Phá Theo Thể Loại</h2>
+                    <p style="font-size: 0.9rem; color: var(--gray-600);">Chọn thể loại để lọc và hiển thị ngay kệ sách tương ứng</p>
+                </div>
+                <div class="search-box">
+                    <input
+                        type="search"
+                        id="searchInput"
+                        name="book_search_keyword"
+                        autocomplete="off"
+                        autocorrect="off"
+                        autocapitalize="off"
+                        spellcheck="false"
+                        data-lpignore="true"
+                        placeholder="Tìm sách theo tên, tác giả hoặc tag..."
+                    >
+                    <button id="searchBtn" type="button">🔍</button>
+                </div>
+            </div>
+
+            <div id="categoryList" class="category-list">
+                <!-- Danh mục nạp động -->
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCTS (CAROUSEL THEO TỪNG THỂ LOẠI) -->
+    <section id="products" class="products-section">
+        <div class="container">
+            <!-- Loading -->
+            <div id="loading" class="loading">
+                ⏳ Đang tải dữ liệu sách...
+            </div>
+
+            <!-- Error -->
+            <div id="error" class="error hidden">
+                ⚠️ Không thể tải dữ liệu sản phẩm từ máy chủ. Vui lòng kiểm tra lại json-server.
+            </div>
+
+            <!-- KHU VỰC KẾT QUẢ TÌM KIẾM (Chỉ hiện khi gõ tìm kiếm) -->
+            <div id="searchResultsSection" class="search-results-section" style="display: none;">
+                <div class="search-results-header">
+                    <h3 id="searchResultsTitle">🔍 Kết quả tìm kiếm</h3>
+                    <button type="button" id="btnClearSearch" class="btn-clear-search">✕ Trở về xem tất cả thể loại</button>
+                </div>
+                <div id="searchProductList" class="product-grid">
+                    <!-- Render kết quả tìm kiếm -->
+                </div>
+
+                <!-- Nút "Xem thêm": tải tiếp kết quả tìm kiếm (hiển thị từng phần) -->
+                <div id="searchLoadMoreWrap" class="search-load-more-wrap" style="display: none;">
+                    <button type="button" id="btnLoadMoreSearch" class="btn-load-more-search">
+                        ⬇️ Xem thêm
+                    </button>
+                </div>
+            </div>
+
+            <!-- CÁC CAROUSEL THEO TỪNG THỂ LOẠI -->
+            <div id="categoryCarouselsContainer" class="category-carousels-container">
+                <!-- Render động các Carousel từng thể loại bằng home.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-box">
+                <div class="about-item">
+                    <div class="about-item-icon">🚚</div>
+                    <h3>Giao hàng toàn quốc</h3>
+                    <p>Đóng gói cẩn thận, vận chuyển nhanh chóng tới tận cửa nhà bạn.</p>
+                </div>
+                <div class="about-item">
+                    <div class="about-item-icon">⭐</div>
+                    <h3>Sách chính hãng 100%</h3>
+                    <p>Cam kết chất lượng giấy in cao cấp, bản quyền chuẩn từ nhà xuất bản.</p>
+                </div>
+                <div class="about-item">
+                    <div class="about-item-icon">🎁</div>
+                    <h3>Ưu đãi thành viên</h3>
+                    <p>Tích điểm đổi quà và nhận bookmark độc quyền khi đặt mua sách.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact" class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <!-- Cột 1: Thông tin thương hiệu -->
+                <div class="footer-col-brand">
+                    <a href="./index.html" class="footer-logo-container">
+                        <img src="/src/assets/logo-light.svg" class="logo-light" alt="Trí Tuệ Book">
+                        <img src="/src/assets/logo-dark.svg" class="logo-dark" alt="Trí Tuệ Book">
+                    </a>
+                    <p class="footer-brand-desc">
+                        Cửa hàng sách trực tuyến mang tri thức tinh hoa và văn hóa đọc đến độc giả trẻ Việt Nam. Đọc sách mỗi ngày để mở rộng tầm nhìn và nuôi dưỡng tâm hồn.
+                    </p>
+                    <div class="footer-badges">
+                        <span class="footer-badge-pill">⚡ Giao hàng nhanh 24h</span>
+                        <span class="footer-badge-pill">🛡️ 100% Sách chuẩn NXB</span>
+                    </div>
+                </div>
+
+                <!-- Cột 2: Danh mục sách -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Danh mục sách</h4>
+                    <ul class="footer-links">
+                        <li><a href="#products">📖 Văn học - Tiểu thuyết</a></li>
+                        <li><a href="#products">💡 Kỹ năng sống & Tư duy</a></li>
+                        <li><a href="#products">💻 Công nghệ & Lập trình</a></li>
+                        <li><a href="#products">📈 Kinh tế & Khởi nghiệp</a></li>
+                        <li><a href="#products">🔭 Khoa học & Vũ trụ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Cột 3: Dịch vụ & Hỗ trợ -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Dịch vụ & Hỗ trợ</h4>
+                    <ul class="footer-links">
+                        <li><a href="./pages/orders.html">📦 Tra cứu đơn hàng</a></li>
+                        <li><a href="./pages/cart.html">🛒 Giỏ hàng & Thanh toán</a></li>
+                        <li><a href="#contact">🔄 Chính sách đổi trả sách</a></li>
+                        <li><a href="#contact">🎁 Thẻ quà tặng & Tích điểm</a></li>
+                        <li><a href="#contact">🤖 Trợ lý AI tư vấn 24/7</a></li>
+                    </ul>
+                </div>
+
+                <!-- Cột 4: Thông tin liên hệ -->
+                <div class="footer-col footer-col-contact">
+                    <h4 class="footer-heading">Liên hệ & Địa chỉ</h4>
+                    <div class="footer-contact-list">
+                        <div class="contact-entry">
+                            <span class="contact-entry-icon">📍</span>
+                            <span>123 Đường Sách, P. Bến Nghé, Quận 1, TP. Hồ Chí Minh</span>
+                        </div>
+                        <div class="contact-entry">
+                            <span class="contact-entry-icon">📞</span>
+                            <div>
+                                <span class="contact-entry-title">Hotline CSKH:</span>
+                                <strong class="contact-entry-phone">1900 6868</strong>
+                                <small class="contact-entry-sub">(8:00 - 21:00 hàng ngày)</small>
+                            </div>
+                        </div>
+                        <div class="contact-entry">
+                            <span class="contact-entry-icon">✉️</span>
+                            <div>
+                                <span class="contact-entry-title">Email hỗ trợ:</span>
+                                <span class="contact-entry-email">lienhe@trituebook.vn</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2026 <strong>Trí Tuệ Book</strong>. Tinh hoa tri thức Việt. Mọi quyền được bảo lưu.</p>
+                <div class="footer-extra-links">
+                    <span>🔒 Bảo mật thanh toán SSL</span>
+                    <span>•</span>
+                    <span>💳 Hỗ trợ VietQR & COD</span>
+                    <span>•</span>
+                    <span>⚡ Nền tảng siêu tốc</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- APP SCRIPT -->
+    <script type="module" src="./src/js/home.js"></script>
+</body>
+</html>

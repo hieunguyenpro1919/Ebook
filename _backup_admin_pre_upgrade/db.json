@@ -1,0 +1,1102 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Văn học - Tiểu thuyết",
+      "icon": "📖"
+    },
+    {
+      "id": 2,
+      "name": "Kỹ năng sống & Phát triển",
+      "icon": "🌱"
+    },
+    {
+      "id": 3,
+      "name": "Công nghệ & Lập trình",
+      "icon": "💻"
+    },
+    {
+      "id": 4,
+      "name": "Kinh tế - Khởi nghiệp",
+      "icon": "📈"
+    },
+    {
+      "id": 5,
+      "name": "Tâm lý & Thiền định",
+      "icon": "🧘"
+    },
+    {
+      "id": 6,
+      "name": "Lịch sử - Triết học",
+      "icon": "🏛️"
+    },
+    {
+      "id": 7,
+      "name": "Khoa học - Vũ trụ",
+      "icon": "🔭"
+    },
+    {
+      "id": 8,
+      "name": "Thiếu nhi - Giáo dục",
+      "icon": "🎨"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Nhà Giả Kim (The Alchemist)",
+      "price": 89000,
+      "image": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=800&q=80",
+      "description": "Một hành trình huyền thoại theo đuổi vận mệnh và ước mơ của chàng trai chăn cừu Santiago qua sa mạc.",
+      "author": "Paulo Coelho",
+      "categoryId": 1,
+      "stock": 99,
+      "tag": "Văn học",
+      "importDate": "2026-09-02T08:00:00Z",
+      "soldCount": 186,
+      "onSale": true,
+      "discountPercent": 50
+    },
+    {
+      "id": 2,
+      "name": "Cây Cam Ngọt Của Tôi",
+      "price": 95000,
+      "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
+      "description": "Câu chuyện cảm động rơi nước mắt về cậu bé Zezé 5 tuổi cùng người bạn tâm giao là cây cam ngọt trong sân nhà.",
+      "author": "José Mauro de Vasconcelos",
+      "categoryId": 1,
+      "stock": 99,
+      "tag": "Văn học",
+      "importDate": "2026-08-03T08:00:00Z",
+      "soldCount": 142
+    },
+    {
+      "id": 3,
+      "name": "Chiến Binh Cầu Vồng",
+      "price": 109000,
+      "image": "https://images.unsplash.com/photo-1532012164546-f432f2e3777f?auto=format&fit=crop&w=800&q=80",
+      "description": "Bức tranh chân thực đầy xúc động về tình thầy trò, sự nghèo đói và khát vọng vượt lên nghịch cảnh ở hòn đảo Belitong.",
+      "author": "Andrea Hirata",
+      "categoryId": 1,
+      "stock": 100,
+      "tag": "Văn học",
+      "importDate": "2026-09-04T08:00:00Z",
+      "soldCount": 36
+    },
+    {
+      "id": 4,
+      "name": "Rừng Na Uy (Norwegian Wood)",
+      "price": 125000,
+      "image": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
+      "description": "Tiểu thuyết kinh điển về tuổi trẻ, nỗi cô đơn, những mất mát và tình yêu day dứt của thế hệ thanh niên Nhật Bản.",
+      "author": "Haruki Murakami",
+      "categoryId": 1,
+      "stock": 100,
+      "tag": "Văn học",
+      "importDate": "2026-08-05T08:00:00Z",
+      "soldCount": 43
+    },
+    {
+      "id": 5,
+      "name": "Bắt Trẻ Đồng Xanh",
+      "price": 85000,
+      "image": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80",
+      "description": "Hành trình nổi loạn và cái nhìn sắc bén, châm biếm về thế giới người lớn qua đôi mắt chàng thiếu niên Holden Caulfield.",
+      "author": "J.D. Salinger",
+      "categoryId": 1,
+      "stock": 100,
+      "tag": "Văn học",
+      "importDate": "2026-09-06T08:00:00Z",
+      "soldCount": 50,
+      "onSale": true,
+      "discountPercent": 30
+    },
+    {
+      "id": 6,
+      "name": "Trăm Năm Cô Đơn",
+      "price": 168000,
+      "image": "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=800&q=80",
+      "description": "Kiệt tác văn học hiện thực huyền ảo về bảy thế hệ dòng họ Buendía và ngôi làng Macondo huyền thoại.",
+      "author": "Gabriel García Márquez",
+      "categoryId": 1,
+      "stock": 100,
+      "tag": "Văn học",
+      "importDate": "2026-08-07T08:00:00Z",
+      "soldCount": 95
+    },
+    {
+      "id": 7,
+      "name": "Hai Số Phận (Kane and Abel)",
+      "price": 175000,
+      "image": "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=800&q=80",
+      "description": "Cuộc đối đầu kịch tính suốt cả cuộc đời giữa hai người đàn ông sinh cùng một ngày nhưng có số phận hoàn toàn trái ngược.",
+      "author": "Jeffrey Archer",
+      "categoryId": 1,
+      "stock": 100,
+      "tag": "Văn học",
+      "importDate": "2026-09-08T08:00:00Z",
+      "soldCount": 160
+    },
+    {
+      "id": 8,
+      "name": "Atomic Habits - Thay Đổi Tí Hon",
+      "price": 145000,
+      "image": "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=800&q=80",
+      "description": "Hệ thống các phương pháp khoa học giúp tạo dựng thói quen tốt và từ bỏ thói quen xấu một cách bền vững.",
+      "author": "James Clear",
+      "categoryId": 2,
+      "stock": 100,
+      "tag": "Kỹ năng",
+      "importDate": "2026-08-09T08:00:00Z",
+      "soldCount": 240,
+      "onSale": false,
+      "discountPercent": 0
+    },
+    {
+      "id": 9,
+      "name": "Đắc Nhân Tâm (How to Win Friends)",
+      "price": 110000,
+      "image": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
+      "description": "Cuốn sách kinh điển về nghệ thuật ứng xử, giao tiếp và thu phục lòng người bán chạy nhất mọi thời đại.",
+      "author": "Dale Carnegie",
+      "categoryId": 2,
+      "stock": 100,
+      "tag": "Kỹ năng",
+      "importDate": "2026-09-10T08:00:00Z",
+      "soldCount": 135
+    },
+    {
+      "id": 10,
+      "name": "Deep Work - Làm Ra Làm Chơi Ra Chơi",
+      "price": 150000,
+      "image": "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?auto=format&fit=crop&w=800&q=80",
+      "description": "Quy tắc vàng rèn luyện khả năng tập trung cao độ để bứt phá hiệu suất công việc trong kỷ nguyên số xao nhãng.",
+      "author": "Cal Newport",
+      "categoryId": 2,
+      "stock": 100,
+      "tag": "Kỹ năng",
+      "importDate": "2026-08-11T08:00:00Z",
+      "soldCount": 30,
+      "onSale": true,
+      "discountPercent": 40
+    },
+    {
+      "id": 11,
+      "name": "Nghệ Thuật Tinh Tế Của Việc Đếch Quan Tâm",
+      "price": 115000,
+      "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
+      "description": "Góc nhìn hài hước nhưng thẳng thắn về cách chấp nhận giới hạn bản thân và chỉ tập trung vào điều thực sự ý nghĩa.",
+      "author": "Mark Manson",
+      "categoryId": 2,
+      "stock": 100,
+      "tag": "Kỹ năng",
+      "importDate": "2026-09-12T08:00:00Z",
+      "soldCount": 110
+    },
+    {
+      "id": 12,
+      "name": "7 Thói Quen Của Người Thành Đạt",
+      "price": 185000,
+      "image": "https://images.unsplash.com/photo-1532012164546-f432f2e3777f?auto=format&fit=crop&w=800&q=80",
+      "description": "Nguyên lý định hướng giải quyết vấn đề cá nhân và nghề nghiệp dựa trên các giá trị trung thực, chính trực.",
+      "author": "Stephen R. Covey",
+      "categoryId": 2,
+      "stock": 100,
+      "tag": "Kỹ năng",
+      "importDate": "2026-08-13T08:00:00Z",
+      "soldCount": 44
+    },
+    {
+      "id": 13,
+      "name": "Đọc Vị Bất Kỳ Ai",
+      "price": 99000,
+      "image": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=800&q=80",
+      "description": "Phương pháp tâm lý học ứng dụng giúp bạn thấu hiểu suy nghĩ và động cơ tiềm ẩn của người đối diện nhanh chóng.",
+      "author": "David J. Lieberman",
+      "categoryId": 2,
+      "stock": 100,
+      "tag": "Kỹ năng",
+      "importDate": "2026-09-14T08:00:00Z",
+      "soldCount": 51
+    },
+    {
+      "id": 14,
+      "name": "Thiết Kế Cuộc Đời Thịnh Vượng",
+      "price": 139000,
+      "image": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80",
+      "description": "Ứng dụng tư duy thiết kế (Design Thinking) của Stanford để hoạch định nghề nghiệp và cuộc sống viên mãn.",
+      "author": "Bill Burnett & Dave Evans",
+      "categoryId": 2,
+      "stock": 100,
+      "tag": "Kỹ năng",
+      "importDate": "2026-08-15T08:00:00Z",
+      "soldCount": 92,
+      "onSale": false,
+      "discountPercent": 0
+    },
+    {
+      "id": 15,
+      "name": "Clean Code - Mã Nguồn Sạch",
+      "price": 240000,
+      "image": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
+      "description": "Cẩm nang hướng dẫn thực hành viết code chuẩn chỉ, dễ đọc, dễ kiểm thử và dễ bảo trì dành cho kỹ sư phần mềm.",
+      "author": "Robert C. Martin",
+      "categoryId": 3,
+      "stock": 100,
+      "tag": "Công nghệ",
+      "importDate": "2026-10-10T09:20:00Z",
+      "soldCount": 65
+    },
+    {
+      "id": 16,
+      "name": "JavaScript: Cẩm Nang Lập Trình Hiện Đại",
+      "price": 280000,
+      "image": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80",
+      "description": "Kiến thức chuyên sâu từ cơ bản đến nâng cao về ES6+, Asynchronous, DOM, Event Loop và kiến trúc ứng dụng Web.",
+      "author": "David Flanagan",
+      "categoryId": 3,
+      "stock": 100,
+      "tag": "Công nghệ",
+      "importDate": "2026-08-17T08:00:00Z",
+      "soldCount": 17
+    },
+    {
+      "id": 17,
+      "name": "The Pragmatic Programmer",
+      "price": 295000,
+      "image": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=800&q=80",
+      "description": "Các bài học triết lý quý báu từ kinh nghiệm thực chiến giúp bạn nâng tầm từ một lập trình viên thành một nghệ nhân phần mềm.",
+      "author": "Andrew Hunt & David Thomas",
+      "categoryId": 3,
+      "stock": 100,
+      "tag": "Công nghệ",
+      "importDate": "2026-09-18T08:00:00Z",
+      "soldCount": 24
+    },
+    {
+      "id": 18,
+      "name": "Thiết Kế Hệ Thống Quy Mô Lớn (System Design)",
+      "price": 320000,
+      "image": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80",
+      "description": "Hướng dẫn từng bước xây dựng kiến trúc microservices, cache, database sharding và load balancer chịu tải hàng triệu người dùng.",
+      "author": "Alex Xu",
+      "categoryId": 3,
+      "stock": 100,
+      "tag": "Công nghệ",
+      "importDate": "2026-08-19T08:00:00Z",
+      "soldCount": 31
+    },
+    {
+      "id": 19,
+      "name": "Refactoring - Cải Thiện Thiết Kế Mã Nguồn",
+      "price": 270000,
+      "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+      "description": "Nguyên lý và các kỹ thuật tái cấu trúc code chuyên nghiệp giúp loại bỏ code smells mà không làm thay đổi hành vi chương trình.",
+      "author": "Martin Fowler",
+      "categoryId": 3,
+      "stock": 100,
+      "tag": "Công nghệ",
+      "importDate": "2026-09-20T08:00:00Z",
+      "soldCount": 115
+    },
+    {
+      "id": 20,
+      "name": "Trí Tuệ Nhân Tạo & Học Máy Căn Bản",
+      "price": 310000,
+      "image": "https://images.unsplash.com/photo-1535378917042-10a22c95931a?auto=format&fit=crop&w=800&q=80",
+      "description": "Giáo trình nhập môn trí tuệ nhân tạo, neural networks, deep learning và các thuật toán học máy phổ biến hiện nay.",
+      "author": "Stuart Russell & Peter Norvig",
+      "categoryId": 3,
+      "stock": 100,
+      "tag": "Công nghệ",
+      "importDate": "2026-08-21T08:00:00Z",
+      "soldCount": 45
+    },
+    {
+      "id": 21,
+      "name": "Fluent Python - Lập Trình Python Chuyên Sâu",
+      "price": 285000,
+      "image": "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?auto=format&fit=crop&w=800&q=80",
+      "description": "Khai thác tối đa sức mạnh của ngôn ngữ Python thông qua Data Model, Generators, Coroutines và Metaprogramming.",
+      "author": "Luciano Ramalho",
+      "categoryId": 3,
+      "stock": 100,
+      "tag": "Công nghệ",
+      "importDate": "2026-09-22T08:00:00Z",
+      "soldCount": 52
+    },
+    {
+      "id": 22,
+      "name": "Khởi Nghiệp Tinh Gọn (The Lean Startup)",
+      "price": 165000,
+      "image": "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80",
+      "description": "Mô hình khởi nghiệp đổi mới sáng tạo, phát triển sản phẩm dựa trên phản hồi khách hàng và MVP.",
+      "author": "Eric Ries",
+      "categoryId": 4,
+      "stock": 100,
+      "tag": "Kinh tế",
+      "importDate": "2026-08-23T08:00:00Z",
+      "soldCount": 59
+    },
+    {
+      "id": 23,
+      "name": "Tư Duy Nhanh Và Chậm",
+      "price": 195000,
+      "image": "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?auto=format&fit=crop&w=800&q=80",
+      "description": "Khám phá hai hệ thống tư duy chi phối cách con người ra quyết định, phân tích định kiến và tâm lý hành vi.",
+      "author": "Daniel Kahneman",
+      "categoryId": 4,
+      "stock": 100,
+      "tag": "Kinh tế",
+      "importDate": "2026-09-24T08:00:00Z",
+      "soldCount": 66
+    },
+    {
+      "id": 24,
+      "name": "Tâm Lý Học Về Tiền (The Psychology of Money)",
+      "price": 155000,
+      "image": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=800&q=80",
+      "description": "19 câu chuyện ngắn minh họa sâu sắc về cách định kiến, cái tôi và cảm xúc ảnh hưởng tới quyết định tài chính cá nhân.",
+      "author": "Morgan Housel",
+      "categoryId": 4,
+      "stock": 100,
+      "tag": "Kinh tế",
+      "importDate": "2026-08-25T08:00:00Z",
+      "soldCount": 85
+    },
+    {
+      "id": 25,
+      "name": "Cha Giàu Cha Nghèo (Rich Dad Poor Dad)",
+      "price": 120000,
+      "image": "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=800&q=80",
+      "description": "Tư duy tài chính đột phá về tài sản và tiêu sản, con đường đạt được tự do tài chính và đầu tư thông minh.",
+      "author": "Robert T. Kiyosaki",
+      "categoryId": 4,
+      "stock": 100,
+      "tag": "Kinh tế",
+      "importDate": "2026-09-26T08:00:00Z",
+      "soldCount": 25
+    },
+    {
+      "id": 26,
+      "name": "Từ Không Đến Một (Zero to One)",
+      "price": 140000,
+      "image": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+      "description": "Bí quyết kiến tạo những công ty công nghệ độc quyền, sáng tạo ra giá trị mới mẻ thay vì sao chép lối mòn.",
+      "author": "Peter Thiel",
+      "categoryId": 4,
+      "stock": 100,
+      "tag": "Kinh tế",
+      "importDate": "2026-08-27T08:00:00Z",
+      "soldCount": 32
+    },
+    {
+      "id": 27,
+      "name": "Chiến Lược Đại Dương Xanh",
+      "price": 180000,
+      "image": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
+      "description": "Phương pháp tạo lập khoảng trống thị trường không có cạnh tranh và biến sự cạnh tranh thành điều vô nghĩa.",
+      "author": "W. Chan Kim & Renée Mauborgne",
+      "categoryId": 4,
+      "stock": 100,
+      "tag": "Kinh tế",
+      "importDate": "2026-09-28T08:00:00Z",
+      "soldCount": 39
+    },
+    {
+      "id": 28,
+      "name": "Từ Tốt Đến Vĩ Đại (Good to Great)",
+      "price": 190000,
+      "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
+      "description": "Nghiên cứu công phu suốt 5 năm hé lộ lý do một số công ty có thể bứt phá trở nên vĩ đại trong khi số khác thì không.",
+      "author": "Jim Collins",
+      "categoryId": 4,
+      "stock": 100,
+      "tag": "Kinh tế",
+      "importDate": "2026-08-01T08:00:00Z",
+      "soldCount": 46
+    },
+    {
+      "id": 29,
+      "name": "Hiểu Về Trái Tim",
+      "price": 135000,
+      "image": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
+      "description": "Những suy ngẫm sâu lắng về tình yêu thương, hạnh phúc, sự tha thứ và nuôi dưỡng bình yên trong tâm hồn.",
+      "author": "Minh Niệm",
+      "categoryId": 5,
+      "stock": 100,
+      "tag": "Tâm lý",
+      "importDate": "2026-09-02T08:00:00Z",
+      "soldCount": 53
+    },
+    {
+      "id": 30,
+      "name": "Giận - Nurturing Compassion",
+      "price": 95000,
+      "image": "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=800&q=80",
+      "description": "Phương pháp thực tập chánh niệm để ôm ấp và chuyển hóa cơn giận dữ thành năng lượng từ bi và thấu hiểu.",
+      "author": "Thích Nhất Hạnh",
+      "categoryId": 5,
+      "stock": 97,
+      "tag": "Tâm lý",
+      "importDate": "2026-08-03T08:00:00Z",
+      "soldCount": 98,
+      "onSale": true,
+      "discountPercent": 35
+    },
+    {
+      "id": 31,
+      "name": "Sức Mạnh Của Hiện Tại (The Power of Now)",
+      "price": 128000,
+      "image": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80",
+      "description": "Cẩm nang tinh thần thức tỉnh giúp bạn thoát khỏi những gánh nặng lo âu quá khứ và tương lai để sống trọn vẹn trong phút giây hiện tại.",
+      "author": "Eckhart Tolle",
+      "categoryId": 5,
+      "stock": 100,
+      "tag": "Tâm lý",
+      "importDate": "2026-09-04T08:00:00Z",
+      "soldCount": 67
+    },
+    {
+      "id": 32,
+      "name": "Đi Tìm Lẽ Sống (Man's Search for Meaning)",
+      "price": 105000,
+      "image": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=800&q=80",
+      "description": "Ký ức kinh hoàng nơi trại tập trung Auschwitz và sự ra đời của liệu pháp ý nghĩa: Con người có thể chịu đựng mọi điều nếu tìm thấy lẽ sống.",
+      "author": "Viktor E. Frankl",
+      "categoryId": 5,
+      "stock": 100,
+      "tag": "Tâm lý",
+      "importDate": "2026-08-05T08:00:00Z",
+      "soldCount": 19
+    },
+    {
+      "id": 33,
+      "name": "Muôn Kiếp Nhân Sinh",
+      "price": 165000,
+      "image": "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=800&q=80",
+      "description": "Bức tranh toàn cảnh về luật nhân quả, luân hồi và những bài học chuyển hóa số mệnh qua nhiều kiếp sống của nhân vật Thomas.",
+      "author": "Nguyên Phong",
+      "categoryId": 5,
+      "stock": 100,
+      "tag": "Tâm lý",
+      "importDate": "2026-09-06T08:00:00Z",
+      "soldCount": 75
+    },
+    {
+      "id": 34,
+      "name": "Bước Chậm Lại Giữa Thế Gian Vội Vã",
+      "price": 88000,
+      "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
+      "description": "Những lời khuyên an ủi nhẹ nhàng dành cho những ai đang cảm thấy kiệt sức, bối rối trước nhịp sống hiện đại hối hả.",
+      "author": "Đại đức Haemin Sunim",
+      "categoryId": 5,
+      "stock": 100,
+      "tag": "Tâm lý",
+      "importDate": "2026-08-07T08:00:00Z",
+      "soldCount": 33
+    },
+    {
+      "id": 35,
+      "name": "Sapiens: Lược Sử Loài Người",
+      "price": 220000,
+      "image": "https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&w=800&q=80",
+      "description": "Góc nhìn đột phá về lịch sử tiến hóa của Homo Sapiens từ thời kỳ đồ đá đến cuộc cách mạng nhận thức và công nghệ sinh học.",
+      "author": "Yuval Noah Harari",
+      "categoryId": 6,
+      "stock": 100,
+      "tag": "Lịch sử",
+      "importDate": "2026-09-08T08:00:00Z",
+      "soldCount": 40
+    },
+    {
+      "id": 36,
+      "name": "Homo Deus: Lược Sử Tương Lai",
+      "price": 230000,
+      "image": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80",
+      "description": "Khảo sát những viễn cảnh tương lai khi con người nâng cấp chính mình thành thần thánh thông qua AI và công nghệ gen.",
+      "author": "Yuval Noah Harari",
+      "categoryId": 6,
+      "stock": 100,
+      "tag": "Lịch sử",
+      "importDate": "2026-08-09T08:00:00Z",
+      "soldCount": 120
+    },
+    {
+      "id": 37,
+      "name": "Chủ Nghĩa Khắc Kỷ (Stoicism)",
+      "price": 145000,
+      "image": "https://images.unsplash.com/photo-1555421689-d68471e189f2?auto=format&fit=crop&w=800&q=80",
+      "description": "Triết học Hy Lạp cổ đại ứng dụng trong đời sống hiện đại: rèn luyện nội tâm bình thản trước mọi biến cố thăng trầm.",
+      "author": "Massimo Pigliucci",
+      "categoryId": 6,
+      "stock": 100,
+      "tag": "Lịch sử",
+      "importDate": "2026-09-10T08:00:00Z",
+      "soldCount": 54
+    },
+    {
+      "id": 38,
+      "name": "Sử Việt - 12 Khúc Tráng Ca",
+      "price": 115000,
+      "image": "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80",
+      "description": "Tái hiện 12 trận đánh oanh liệt và những khúc ngoặt định mệnh trong lịch sử hào hùng dựng nước và giữ nước của dân tộc.",
+      "author": "Dũng Phan",
+      "categoryId": 6,
+      "stock": 100,
+      "tag": "Lịch sử",
+      "importDate": "2026-08-11T08:00:00Z",
+      "soldCount": 61
+    },
+    {
+      "id": 39,
+      "name": "Lược Sử Vạn Vật",
+      "price": 260000,
+      "image": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
+      "description": "Hành trình tìm hiểu khoa học lôi cuốn từ vụ nổ Big Bang, sự hình thành các hành tinh cho đến nguồn gốc sự sống trên Trái Đất.",
+      "author": "Bill Bryson",
+      "categoryId": 6,
+      "stock": 100,
+      "tag": "Lịch sử",
+      "importDate": "2026-09-12T08:00:00Z",
+      "soldCount": 68
+    },
+    {
+      "id": 40,
+      "name": "Triết Học Cho Người Mới Bắt Đầu",
+      "price": 135000,
+      "image": "https://images.unsplash.com/photo-1491841573634-28140fc7ced7?auto=format&fit=crop&w=800&q=80",
+      "description": "Tóm tắt trực quan các tư tưởng triết học vĩ đại từ Socrates, Plato, Descartes đến Nietzsche và Sartre.",
+      "author": "Marcus Weeks",
+      "categoryId": 6,
+      "stock": 100,
+      "tag": "Lịch sử",
+      "importDate": "2026-08-13T08:00:00Z",
+      "soldCount": 20
+    },
+    {
+      "id": 41,
+      "name": "Vũ Trụ Trong Vỏ Hạt Dẻ",
+      "price": 185000,
+      "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
+      "description": "Khám phá các bí ẩn của vật lý lý thuyết hiện đại: thuyết tương đối rộng, cơ học lượng tử, lỗ đen và lý thuyết màng.",
+      "author": "Stephen Hawking",
+      "categoryId": 7,
+      "stock": 100,
+      "tag": "Khoa học",
+      "importDate": "2026-09-14T08:00:00Z",
+      "soldCount": 27
+    },
+    {
+      "id": 42,
+      "name": "Vũ Trụ (Cosmos)",
+      "price": 240000,
+      "image": "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=80",
+      "description": "Kiệt tác văn chương khoa học đưa bạn dạo bước qua 15 tỷ năm lịch sử vũ trụ và sự phát triển của nền văn minh nhân loại.",
+      "author": "Carl Sagan",
+      "categoryId": 7,
+      "stock": 100,
+      "tag": "Khoa học",
+      "importDate": "2026-08-15T08:00:00Z",
+      "soldCount": 34
+    },
+    {
+      "id": 43,
+      "name": "Bản Thiết Kế Vĩ Đại (The Grand Design)",
+      "price": 160000,
+      "image": "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=800&q=80",
+      "description": "Câu trả lời của các nhà vật lý hàng đầu thế giới về nguồn gốc vũ trụ và liệu có cần một đấng sáng thế để tạo ra muôn loài.",
+      "author": "Stephen Hawking & Leonard Mlodinow",
+      "categoryId": 7,
+      "stock": 100,
+      "tag": "Khoa học",
+      "importDate": "2026-09-16T08:00:00Z",
+      "soldCount": 41
+    },
+    {
+      "id": 44,
+      "name": "Nguồn Gốc Các Loài",
+      "price": 275000,
+      "image": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
+      "description": "Tác phẩm đặt nền móng cho sinh học tiến hóa, giải thích thuyết chọn lọc tự nhiên làm thay đổi vĩnh viễn tư duy nhân loại.",
+      "author": "Charles Darwin",
+      "categoryId": 7,
+      "stock": 100,
+      "tag": "Khoa học",
+      "importDate": "2026-10-11T14:15:00Z",
+      "soldCount": 48
+    },
+    {
+      "id": 45,
+      "name": "Vật Lý Thiên Văn Cho Người Vội Vã",
+      "price": 89000,
+      "image": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80",
+      "description": "Cuốn sách nhỏ gọn, dí dỏm giải thích ngắn gọn bản chất không gian, thời gian, vật chất tối và năng lượng tối.",
+      "author": "Neil deGrasse Tyson",
+      "categoryId": 7,
+      "stock": 100,
+      "tag": "Khoa học",
+      "importDate": "2026-09-18T08:00:00Z",
+      "soldCount": 55
+    },
+    {
+      "id": 46,
+      "name": "Hoàng Tử Bé (Le Petit Prince)",
+      "price": 75000,
+      "image": "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=800&q=80",
+      "description": "Câu chuyện ngụ ngôn tuyệt đẹp về hoàng tử bé đến từ tiểu hành tinh B-612 và những bài học thuần hóa tình bạn, tình yêu.",
+      "author": "Antoine de Saint-Exupéry",
+      "categoryId": 8,
+      "stock": 100,
+      "tag": "Thiếu nhi",
+      "importDate": "2026-08-19T08:00:00Z",
+      "soldCount": 62
+    },
+    {
+      "id": 47,
+      "name": "Dế Mèn Phiêu Lưu Ký",
+      "price": 65000,
+      "image": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
+      "description": "Tác phẩm văn học thiếu nhi kinh điển của Việt Nam kể về hành trình chu du thiên hạ và trưởng thành của chú Dế Mèn dũng cảm.",
+      "author": "Tô Hoài",
+      "categoryId": 8,
+      "stock": 100,
+      "tag": "Thiếu nhi",
+      "importDate": "2026-09-20T08:00:00Z",
+      "soldCount": 69
+    },
+    {
+      "id": 48,
+      "name": "Chuyện Con Mèo Dạy Hải Âu Bay",
+      "price": 72000,
+      "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
+      "description": "Câu chuyện ấm áp về chú mèo mun Zorba mập ú giữ lời hứa chăm sóc và dạy một cô hải âu con tập bay.",
+      "author": "Luis Sepúlveda",
+      "categoryId": 8,
+      "stock": 100,
+      "tag": "Thiếu nhi",
+      "importDate": "2026-08-21T08:00:00Z",
+      "soldCount": 21
+    },
+    {
+      "id": 49,
+      "name": "Không Gia Đình (Sans Famille)",
+      "price": 145000,
+      "image": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
+      "description": "Hành trình bươn chải kiên cường, đầy tình người của cậu bé mồ côi Rémi và gánh xiếc rong của cụ Vitalis trên khắp nước Pháp.",
+      "author": "Hector Malot",
+      "categoryId": 8,
+      "stock": 100,
+      "tag": "Thiếu nhi",
+      "importDate": "2026-10-12T10:30:00Z",
+      "soldCount": 28
+    },
+    {
+      "id": 50,
+      "name": "Đồi Thỏ (Watership Down)",
+      "price": 155000,
+      "image": "https://images.unsplash.com/photo-1532012164546-f432f2e3777f?auto=format&fit=crop&w=800&q=80",
+      "description": "Cuộc phiêu lưu tráng lệ và lòng quả cảm của bầy thỏ đi tìm vùng đất hứa mới để xây dựng tổ ấm tự do.",
+      "author": "Richard Adams",
+      "categoryId": 8,
+      "stock": 100,
+      "tag": "Thiếu nhi",
+      "importDate": "2026-10-13T08:00:00Z",
+      "soldCount": 35
+    }
+  ],
+  "user": [
+    {
+      "id": 1,
+      "name": "Nguyen Van A",
+      "email": "a@example.com",
+      "password": "123456",
+      "role": "customer"
+    },
+    {
+      "id": 2,
+      "name": "Trần Minh",
+      "email": "demo@bookstore.vn",
+      "password": "123456",
+      "role": "customer"
+    },
+    {
+      "name": "Nguyễn Văn A",
+      "email": "vana@gmail.com",
+      "password": "testpass123",
+      "id": 3,
+      "role": "customer"
+    },
+    {
+      "name": "nguyen van b",
+      "email": "b@gmail.com",
+      "password": "bgmail",
+      "id": 4,
+      "role": "customer"
+    },
+    {
+      "id": 99,
+      "name": "Quản Trị Viên (Admin)",
+      "email": "admin@bookstore.vn",
+      "password": "admin",
+      "role": "admin"
+    }
+  ],
+  "orders": [
+    {
+      "orderCode": "DH326164",
+      "userId": 3,
+      "userEmail": "vana@gmail.com",
+      "receiverName": "Nguyễn Văn A",
+      "receiverPhone": "0989736442",
+      "receiverAddress": "nhà không số, phố không tên, xã không biết, thành phố mộng mơ.",
+      "receiverNote": "",
+      "items": [
+        {
+          "id": 1,
+          "name": "Nhà Giả Kim (The Alchemist)",
+          "price": 89000,
+          "image": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=800&q=80",
+          "quantity": 10
+        },
+        {
+          "id": 30,
+          "name": "Giận - Nurturing Compassion",
+          "price": 95000,
+          "image": "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=800&q=80",
+          "quantity": 10
+        }
+      ],
+      "subTotal": 1840000,
+      "shippingFee": 0,
+      "totalAmount": 1840000,
+      "paymentMethod": "COD",
+      "status": "Hoàn thành",
+      "createdAt": "2026-10-13T06:29:44.022Z",
+      "id": 1
+    },
+    {
+      "orderCode": "DH461503",
+      "userId": 3,
+      "userEmail": "vana@gmail.com",
+      "receiverName": "Nguyễn Văn A",
+      "receiverPhone": "0989736442",
+      "receiverAddress": "nhà không số, phố không tên, xã không biết, thành phố mộng mơ",
+      "receiverNote": "",
+      "items": [
+        {
+          "id": 1,
+          "name": "Nhà Giả Kim (The Alchemist)",
+          "price": 89000,
+          "image": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=800&q=80",
+          "quantity": 10,
+          "stock": 100
+        }
+      ],
+      "subTotal": 890000,
+      "shippingFee": 0,
+      "totalAmount": 890000,
+      "paymentMethod": "COD",
+      "status": "Hoàn thành",
+      "createdAt": "2026-10-13T06:52:56.559Z",
+      "id": 2
+    },
+    {
+      "orderCode": "DH312206",
+      "userId": 3,
+      "userEmail": "vana@gmail.com",
+      "receiverName": "Nguyễn Văn A",
+      "receiverPhone": "0989736442",
+      "receiverAddress": "nhà không số, phố không tên, xã không biết, thành phố mộng mơ",
+      "receiverNote": "",
+      "items": [
+        {
+          "id": 1,
+          "name": "Nhà Giả Kim (The Alchemist)",
+          "price": 89000,
+          "image": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=800&q=80",
+          "quantity": 10,
+          "stock": 100
+        }
+      ],
+      "subTotal": 890000,
+      "shippingFee": 0,
+      "totalAmount": 890000,
+      "paymentMethod": "COD",
+      "status": "Hoàn thành",
+      "createdAt": "2026-10-13T06:56:53.127Z",
+      "id": 3
+    },
+    {
+      "orderCode": "DH775390",
+      "userId": 3,
+      "userEmail": "vana@gmail.com",
+      "receiverName": "Nguyễn Văn A",
+      "receiverPhone": "0989736442",
+      "receiverAddress": "as",
+      "receiverNote": "",
+      "items": [
+        {
+          "id": 30,
+          "name": "Giận - Nurturing Compassion",
+          "price": 62000,
+          "image": "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=800&q=80",
+          "quantity": 1,
+          "stock": 100
+        }
+      ],
+      "subTotal": 62000,
+      "shippingFee": 30000,
+      "totalAmount": 92000,
+      "paymentMethod": "COD",
+      "status": "Chờ xác nhận (COD)",
+      "createdAt": "2026-10-15T07:15:40.272Z",
+      "id": 4
+    },
+    {
+      "orderCode": "DH905294",
+      "userId": 3,
+      "userEmail": "vana@gmail.com",
+      "receiverName": "Nguyễn Văn A",
+      "receiverPhone": "0989736442",
+      "receiverAddress": "as",
+      "receiverNote": "",
+      "items": [
+        {
+          "id": 1,
+          "name": "Nhà Giả Kim (The Alchemist)",
+          "price": 45000,
+          "image": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=800&q=80",
+          "quantity": 1,
+          "stock": 100
+        }
+      ],
+      "subTotal": 45000,
+      "shippingFee": 30000,
+      "totalAmount": 75000,
+      "paymentMethod": "VIETQR",
+      "status": "Hoàn thành",
+      "isPaid": true,
+      "paymentStatus": "Đã thanh toán (VietQR)",
+      "createdAt": "2026-10-15T07:26:11.556Z",
+      "id": 5
+    },
+    {
+      "orderCode": "DH376229",
+      "userId": 3,
+      "userEmail": "vana@gmail.com",
+      "receiverName": "Nguyễn Văn A",
+      "receiverPhone": "0989736442",
+      "receiverAddress": "as",
+      "receiverNote": "",
+      "items": [
+        {
+          "id": 30,
+          "name": "Giận - Nurturing Compassion",
+          "price": 62000,
+          "image": "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=800&q=80",
+          "quantity": 1,
+          "stock": 99
+        }
+      ],
+      "subTotal": 62000,
+      "shippingFee": 30000,
+      "totalAmount": 92000,
+      "paymentMethod": "VIETQR",
+      "status": "Đang giao hàng",
+      "isPaid": true,
+      "paymentStatus": "Đã thanh toán (VietQR)",
+      "createdAt": "2026-10-16T08:56:27.502Z",
+      "id": 6
+    },
+    {
+      "orderCode": "DH559045",
+      "userId": 3,
+      "userEmail": "vana@gmail.com",
+      "receiverName": "Nguyễn Văn A",
+      "receiverPhone": "0989736442",
+      "receiverAddress": "AS",
+      "receiverNote": "",
+      "items": [
+        {
+          "id": 2,
+          "name": "Cây Cam Ngọt Của Tôi",
+          "price": 95000,
+          "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
+          "quantity": 1,
+          "stock": 100
+        }
+      ],
+      "subTotal": 95000,
+      "shippingFee": 30000,
+      "totalAmount": 125000,
+      "paymentMethod": "VIETQR",
+      "status": "Đang giao hàng",
+      "isPaid": true,
+      "paymentStatus": "Đã thanh toán (VietQR)",
+      "createdAt": "2026-10-16T09:07:25.628Z",
+      "id": 7
+    },
+    {
+      "orderCode": "DH743577",
+      "userId": 99,
+      "userEmail": "admin@bookstore.vn",
+      "receiverName": "Quản Trị Viên (Admin)",
+      "receiverPhone": "0989736442",
+      "receiverAddress": "aaaaa",
+      "receiverNote": "",
+      "items": [
+        {
+          "id": 30,
+          "name": "Giận - Nurturing Compassion",
+          "price": 62000,
+          "image": "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=800&q=80",
+          "quantity": 1,
+          "stock": 98
+        }
+      ],
+      "subTotal": 62000,
+      "shippingFee": 30000,
+      "totalAmount": 92000,
+      "paymentMethod": "COD",
+      "status": "Chờ xác nhận (COD)",
+      "isPaid": false,
+      "paymentStatus": "Chờ thanh toán khi nhận hàng (COD)",
+      "createdAt": "2026-10-16T12:13:58.007Z",
+      "id": 8
+    }
+  ],
+  "menu": [
+    {
+      "id": 1,
+      "title": "Trang chủ",
+      "url": "./index.html",
+      "isHome": true
+    },
+    {
+      "id": 2,
+      "title": "Sách mới",
+      "url": "#newProductsSection"
+    },
+    {
+      "id": 3,
+      "title": "Thể loại sách",
+      "url": "#products",
+      "hasDropdown": true
+    },
+    {
+      "id": 4,
+      "title": "Đơn hàng",
+      "url": "./pages/orders.html",
+      "requireAuth": true
+    },
+    {
+      "id": 5,
+      "title": "Giới thiệu",
+      "url": "#about"
+    },
+    {
+      "id": 6,
+      "title": "Liên hệ",
+      "url": "#contact"
+    }
+  ],
+  "reviews": [
+    {
+      "id": 1,
+      "productId": 1,
+      "userId": 3,
+      "userName": "Nguyễn Văn A",
+      "rating": 5,
+      "comment": "Một tác phẩm kinh điển thay đổi hoàn toàn cách tôi nhìn nhận ước mơ và vận mệnh của chính mình. Rất đáng đọc!",
+      "createdAt": "2026-10-10T08:30:00Z"
+    },
+    {
+      "id": 2,
+      "productId": 1,
+      "userId": 2,
+      "userName": "Trần Thị B",
+      "rating": 5,
+      "comment": "Sách in đẹp, giấy xịn, giao hàng nhanh. Lời văn của Paulo Coelho quá thấm thía.",
+      "createdAt": "2026-10-11T14:15:00Z"
+    },
+    {
+      "id": 3,
+      "productId": 2,
+      "userId": 3,
+      "userName": "Nguyễn Văn A",
+      "rating": 5,
+      "comment": "Đọc mà rơi nước mắt thương cậu bé Zezé. Một cuốn sách chứa đựng tình yêu thương ấm áp.",
+      "createdAt": "2026-10-09T19:20:00Z"
+    },
+    {
+      "id": 4,
+      "productId": 8,
+      "userId": 2,
+      "userName": "Trần Thị B",
+      "rating": 5,
+      "comment": "Cuốn sách kỹ năng gối đầu giường của mọi thế hệ. Áp dụng được ngay vào giao tiếp hàng ngày.",
+      "createdAt": "2026-10-08T10:00:00Z"
+    },
+    {
+      "id": 5,
+      "productId": 14,
+      "userId": 3,
+      "userName": "Nguyễn Văn A",
+      "rating": 5,
+      "comment": "Dân lập trình bắt buộc phải đọc. Giúp viết code sạch và tư duy kiến trúc tốt hơn nhiều.",
+      "createdAt": "2026-10-07T16:45:00Z"
+    },
+    {
+      "id": 6,
+      "productId": 30,
+      "userId": 1,
+      "userName": "Quản trị viên",
+      "rating": 5,
+      "comment": "Lược sử loài người mở rộng nhãn quan lịch sử và sinh học một cách ngoạn mục.",
+      "createdAt": "2026-10-05T11:20:00Z"
+    },
+    {
+      "productId": 50,
+      "userId": 3,
+      "userName": "Nguyễn Văn A",
+      "rating": 5,
+      "comment": "nội dung trẻ con quá!",
+      "createdAt": "2026-10-13T08:43:49.116Z",
+      "id": 7
+    },
+    {
+      "productId": 8,
+      "userId": 3,
+      "userName": "Nguyễn Văn A",
+      "userEmail": "vana@gmail.com",
+      "rating": 5,
+      "comment": "hay!",
+      "createdAt": "2026-10-13T08:50:12.739Z",
+      "id": 8
+    },
+    {
+      "productId": 50,
+      "userId": 99,
+      "userName": "Quản Trị Viên (Admin)",
+      "userEmail": "admin@bookstore.vn",
+      "rating": 5,
+      "comment": "shop thấy hay mà?",
+      "createdAt": "2026-10-13T08:51:14.844Z",
+      "id": 9
+    }
+  ],
+  "saleConfig": [
+    {
+      "id": 1,
+      "isActive": true,
+      "campaignName": "⚡ Flash Sale Giờ Vàng (24 Tiếng)",
+      "startTime": "2026-10-20T05:50:09.070Z",
+      "endTime": "2026-10-21T05:50:09.070Z",
+      "startDate": "2026-10-20",
+      "endDate": "2026-10-21",
+      "durationHours": 24,
+      "description": "Ưu đãi giá sốc có hạn trong ngày hôm nay - Đếm ngược 24 tiếng!"
+    }
+  ]
+}

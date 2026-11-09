@@ -1,0 +1,654 @@
+/* ========================================================
+   CHATBOT WIDGET STYLES - NHÀ SÁCH TRÍ TUỆ
+   Thiết kế hiện đại, Glassmorphism, Responsive & Micro-interactions
+   ======================================================== */
+
+:root {
+  --bot-primary: #4f46e5;
+  --bot-primary-hover: #4338ca;
+  --bot-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  --bot-bg: #ffffff;
+  --bot-dark: #0f172a;
+  --bot-gray: #64748b;
+  --bot-light-gray: #f8fafc;
+  --bot-border: #e2e8f0;
+  --bot-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.28), 0 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+/* NÚT BONG BÓNG MỞ CHAT NỔI (FLOATING LAUNCHER) */
+.ai-chat-launcher {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ai-chat-toggle-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--bot-gradient);
+  border: none;
+  color: #ffffff;
+  font-size: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.45);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  outline: none;
+}
+
+.ai-chat-toggle-btn:hover {
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 14px 30px rgba(79, 70, 229, 0.55);
+}
+
+.ai-chat-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+/* Hiệu ứng hào quang xung quanh nút */
+.ai-chat-toggle-btn::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(124, 58, 237, 0.4);
+  animation: pulseGlow 2.5s infinite;
+  pointer-events: none;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 0; }
+  100% { transform: scale(0.95); opacity: 0; }
+}
+
+/* Huy hiệu AI nhỏ trên nút tròn */
+.ai-launcher-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #10b981;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 2px solid #ffffff;
+  letter-spacing: 0.5px;
+}
+
+/* Tooltip gợi ý chào mời người dùng */
+.ai-launcher-tooltip {
+  background: #ffffff;
+  color: var(--bot-dark);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  animation: bounceHint 3s infinite ease-in-out;
+  cursor: pointer;
+  border: 1px solid var(--bot-border);
+}
+
+@keyframes bounceHint {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-6px); }
+}
+
+/* KHUNG CỬA SỔ CHAT (POPUP WINDOW) */
+.ai-chat-window {
+  position: fixed;
+  bottom: 100px;
+  right: 28px;
+  width: 400px;
+  max-width: calc(100vw - 36px);
+  height: 590px;
+  max-height: calc(100vh - 120px);
+  background: var(--bot-bg);
+  border-radius: 20px;
+  box-shadow: var(--bot-shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+  z-index: 10000;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.ai-chat-window.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* HEADER CỬA SỔ CHAT */
+.ai-chat-header {
+  background: var(--bot-gradient);
+  color: #ffffff;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.ai-header-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ai-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+
+.ai-title-wrap h4 {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+}
+
+.ai-status-indicator {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 1px;
+}
+
+.ai-status-indicator .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34d399;
+  display: inline-block;
+}
+
+.ai-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-btn-icon {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.ai-btn-icon:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* PANEL CẤU HÌNH API KEY (Trượt xuống) */
+.ai-api-panel {
+  background: #f8fafc;
+  border-bottom: 1px solid var(--bot-border);
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  display: none;
+  animation: slideDownPanel 0.2s ease-out;
+}
+
+.ai-api-panel.active {
+  display: block;
+}
+
+@keyframes slideDownPanel {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ai-api-panel p {
+  color: #475569;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.ai-api-input-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.ai-api-input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid var(--bot-border);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  outline: none;
+  -webkit-text-security: disc;
+}
+
+.ai-api-input:focus {
+  border-color: var(--bot-primary);
+}
+
+.ai-btn-save-key {
+  background: var(--bot-primary);
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ai-btn-save-key:hover {
+  background: var(--bot-primary-hover);
+}
+
+.ai-api-help-links {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+}
+
+.ai-api-help-links a {
+  color: var(--bot-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.ai-api-help-links button {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.75rem;
+}
+
+/* VÙNG DANH SÁCH TIN NHẮN (MESSAGE LIST) */
+.ai-chat-body {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  overflow-x: hidden !important;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #fdfdfd;
+  box-sizing: border-box;
+}
+
+.ai-chat-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.ai-chat-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+/* TỪNG DÒNG TIN NHẮN */
+.ai-msg-row {
+  display: flex;
+  gap: 8px;
+  max-width: 92%;
+  min-width: 0;
+  width: 100%;
+  animation: fadeInMsg 0.25s ease-out;
+  box-sizing: border-box;
+}
+
+@keyframes fadeInMsg {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ai-msg-row.bot {
+  align-self: flex-start;
+}
+
+.ai-msg-row.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.ai-msg-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e0e7ff;
+  color: var(--bot-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ai-msg-bubble {
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+  min-width: 0;
+  max-width: calc(100% - 36px);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.ai-msg-row.bot .ai-msg-bubble {
+  background: #f1f5f9;
+  color: var(--bot-dark);
+  border-top-left-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.ai-msg-row.user .ai-msg-bubble {
+  background: var(--bot-gradient);
+  color: #ffffff;
+  border-top-right-radius: 4px;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+}
+
+.ai-msg-bubble strong {
+  font-weight: 700;
+}
+
+.ai-msg-bubble ul, .ai-msg-bubble ol {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+
+.ai-msg-bubble li {
+  margin-bottom: 4px;
+}
+
+.ai-msg-bubble p {
+  margin: 0 0 6px 0;
+}
+
+.ai-msg-bubble p:last-child {
+  margin-bottom: 0;
+}
+
+/* CARD SÁCH MINI TRONG TIN NHẮN BOT */
+.chat-books-carousel {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px 2px;
+  margin-top: 10px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chat-book-item {
+  width: 130px;
+  min-width: 125px;
+  max-width: 135px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: transform 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.chat-book-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.chat-book-item img {
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.chat-book-item .name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--bot-dark);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+
+.chat-book-item .price {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #dc2626;
+  margin-bottom: 6px;
+}
+
+.chat-book-item .btn-view-book {
+  background: var(--bot-primary);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 0;
+  text-align: center;
+  border-radius: 6px;
+  margin-top: auto;
+  transition: background 0.15s;
+}
+
+.chat-book-item .btn-view-book:hover {
+  background: var(--bot-primary-hover);
+}
+
+/* TYPING INDICATOR */
+.ai-typing-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  background: #f1f5f9;
+  border-radius: 16px;
+  border-top-left-radius: 4px;
+}
+
+.ai-typing-indicator .typing-dot {
+  width: 6px;
+  height: 6px;
+  background: #94a3b8;
+  border-radius: 50%;
+  animation: typingPulse 1.2s infinite ease-in-out;
+}
+
+.ai-typing-indicator .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.ai-typing-indicator .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingPulse {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* NÚT GỢI Ý NHANH (SUGGESTION CHIPS) */
+.ai-quick-suggestions {
+  padding: 6px 14px 10px 14px;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
+  scrollbar-width: none;
+}
+
+.ai-quick-suggestions::-webkit-scrollbar {
+  display: none;
+}
+
+.ai-chip-btn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 11px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ai-chip-btn:hover {
+  background: #e0e7ff;
+  border-color: #c7d2fe;
+  color: var(--bot-primary);
+  transform: translateY(-1px);
+}
+
+/* THANH NHẬP TIN NHẮN (FOOTER INPUT) */
+.ai-chat-footer {
+  padding: 10px 14px;
+  background: #ffffff;
+  border-top: 1px solid var(--bot-border);
+}
+
+.ai-chat-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-chat-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.5px solid var(--bot-border);
+  border-radius: 999px;
+  font-size: 0.875rem;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ai-chat-input:focus {
+  border-color: var(--bot-primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.ai-chat-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bot-gradient);
+  border: none;
+  color: #ffffff;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+}
+
+.ai-chat-send-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+}
+
+.ai-chat-send-btn:active {
+  transform: scale(0.92);
+}
+
+.ai-chat-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* RESPONSIVE TRÊN THIẾT BỊ DI ĐỘNG */
+@media (max-width: 480px) {
+  .ai-chat-launcher {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .ai-chat-toggle-btn {
+    width: 54px;
+    height: 54px;
+    font-size: 1.5rem;
+  }
+
+  .ai-launcher-tooltip {
+    display: none;
+  }
+
+  .ai-chat-window {
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
+
+  .ai-chat-header {
+    border-radius: 0;
+    padding: 16px 14px;
+  }
+}

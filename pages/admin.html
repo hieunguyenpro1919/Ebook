@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản trị hệ thống - Trí Tuệ Book</title>
+    <link rel="stylesheet" href="../src/css/admin.css">
+    <script>
+        (function() {
+            var m = localStorage.getItem('theme_mode');
+            if (m === 'dark' || (!m && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+    <script type="importmap">
+    {
+      "imports": {
+        "axios": "https://esm.sh/axios@1.7.9"
+      }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- TOPBAR -->
+    <header class="admin-topbar">
+        <div class="container admin-topbar-inner">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <a href="../index.html" class="brand-logo-container">
+                    <img src="/src/assets/logo-light.svg" class="logo-light" alt="Trí Tuệ Book - Sáng">
+                    <img src="/src/assets/logo-dark.svg" class="logo-dark" alt="Trí Tuệ Book - Tối">
+                </a>
+                <span class="admin-badge">Admin Portal</span>
+            </div>
+
+            <div class="admin-actions">
+                <button type="button" class="theme-switch-btn" title="Đổi giao diện Sáng / Tối" aria-label="Đổi giao diện">🌙</button>
+                <a href="./profile.html" class="btn-store-link" title="Xem và sửa hồ sơ cá nhân">
+                    👤 Hồ sơ
+                </a>
+                <a href="../index.html" class="btn-store-link">
+                    🏪 Xem trang bán hàng
+                </a>
+                <button type="button" class="btn-admin-logout" id="btnAdminLogout">
+                    Đăng xuất
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN DASHBOARD -->
+    <main>
+        <div class="container">
+            <!-- STATS CARDS (4 CHỈ SỐ QUẢN TRỊ - HỖ TRỢ ĐIỀU HƯỚNG NHANH) -->
+            <div class="stats-grid">
+                <div class="stat-card" id="cardStatBooks" role="button" tabindex="0" title="Bấm để xem nhanh Kho sách toàn sàn">
+                    <div class="stat-icon books">📚</div>
+                    <div class="stat-details">
+                        <h4>Đầu sách & Tồn kho</h4>
+                        <div class="stat-val" id="statTotalBooks">0 đầu sách</div>
+                        <span class="stat-sub" id="statTotalStock">Tổng tồn: 0 cuốn</span>
+                    </div>
+                    <div class="stat-card-action" title="Chuyển đến Kho sách">→</div>
+                </div>
+
+                <div class="stat-card" id="cardStatOrders" role="button" tabindex="0" title="Bấm để xem nhanh Danh sách đơn hàng">
+                    <div class="stat-icon orders">📦</div>
+                    <div class="stat-details">
+                        <h4>Đơn hàng</h4>
+                        <div class="stat-val" id="statTotalOrders">0 đơn</div>
+                        <span class="stat-sub" id="statPendingOrders">Chờ xử lý: 0 đơn</span>
+                    </div>
+                    <div class="stat-card-action" title="Chuyển đến Đơn hàng">→</div>
+                </div>
+
+                <div class="stat-card" id="cardStatRevenue" role="button" tabindex="0" title="Bấm để xem nhanh Thống kê doanh thu">
+                    <div class="stat-icon revenue">💰</div>
+                    <div class="stat-details">
+                        <h4>Tổng doanh thu</h4>
+                        <div class="stat-val" id="statTotalRevenue">0 ₫</div>
+                        <span class="stat-sub" id="statCompletedRevenue">Đơn hoàn thành</span>
+                    </div>
+                    <div class="stat-card-action" title="Chuyển đến Thống kê doanh thu">→</div>
+                </div>
+
+                <div class="stat-card" id="cardStatWarning" role="button" tabindex="0" title="Bấm để lọc ngay sách cần nhập kho">
+                    <div class="stat-icon warning">⚠️</div>
+                    <div class="stat-details">
+                        <h4>Cảnh báo kho hàng</h4>
+                        <div class="stat-val" id="statLowStock">0 sách</div>
+                        <span class="stat-sub" id="statOutStock">Hết hàng: 0</span>
+                    </div>
+                    <div class="stat-card-action" title="Lọc sách cần nhập">→</div>
+                </div>
+            </div>
+
+            <!-- TABS ĐIỀU HƯỚNG QUẢN TRỊ (CHUẨN 3 TRỤ CỘT + PHỤ TRỢ) -->
+            <div class="admin-tabs">
+                <button type="button" class="tab-btn active" data-tab="tab-books">
+                    <span class="tab-icon">📚</span>
+                    <span class="tab-label">Kho sách toàn sàn</span>
+                    <span class="tab-badge" id="booksTabCount">0</span>
+                </button>
+                <button type="button" class="tab-btn" data-tab="tab-orders">
+                    <span class="tab-icon">📦</span>
+                    <span class="tab-label">Đơn hàng</span>
+                    <span class="tab-badge" id="ordersTabCount">0</span>
+                </button>
+                <button type="button" class="tab-btn" data-tab="tab-revenue">
+                    <span class="tab-icon">📊</span>
+                    <span class="tab-label">Thống kê doanh thu</span>
+                    <span class="tab-badge" id="revenueTabBadge" style="background: #10b981; color: white;">Mới</span>
+                </button>
+                <button type="button" class="tab-btn" data-tab="tab-categories">
+                    <span class="tab-icon">📂</span>
+                    <span class="tab-label">Thể loại</span>
+                    <span class="tab-badge" id="categoriesTabCount">0</span>
+                </button>
+                <button type="button" class="tab-btn" data-tab="tab-users">
+                    <span class="tab-icon">👥</span>
+                    <span class="tab-label">Tài khoản & Đối tác</span>
+                    <span class="tab-badge" id="usersTabCount">0</span>
+                </button>
+                <button type="button" class="tab-btn" data-tab="tab-sales">
+                    <span class="tab-icon">⚡</span>
+                    <span class="tab-label">Khuyến mãi</span>
+                    <span class="tab-badge" id="salesTabCount">0</span>
+                </button>
+            </div>
+
+            <!-- TAB 1: QUẢN LÝ SÁCH & TỒN KHO TOÀN SÀN -->
+            <section id="tab-books" class="tab-panel active">
+                <div class="panel-controls">
+                    <div class="filter-controls-group">
+                        <input 
+                            type="search" 
+                            id="searchBookInput" 
+                            class="search-box-admin" 
+                            placeholder="Tìm sách theo tên, tác giả..."
+                        >
+
+                        <select id="filterBookCategory" class="select-filter-admin">
+                            <option value="">-- Tất cả thể loại --</option>
+                        </select>
+
+                        <select id="filterBookSeller" class="select-filter-admin">
+                            <option value="">-- Tất cả nguồn sách / Nhà bán --</option>
+                        </select>
+
+                        <select id="filterBookStock" class="select-filter-admin">
+                            <option value="">-- Tất cả trạng thái kho --</option>
+                            <option value="in_stock">Còn nhiều (≥ 10 cuốn)</option>
+                            <option value="low_stock">Sắp hết hàng (&lt; 10 cuốn)</option>
+                            <option value="out_of_stock">Hết hàng (0 cuốn)</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <button type="button" class="btn-export-excel" id="btnExportBooksAdmin" title="Xuất toàn bộ danh sách sách ra file Excel">
+                            📊 Xuất Excel
+                        </button>
+                        <button type="button" class="btn-export-excel btn-import-excel" id="btnImportBooksAdmin" style="background: #0284c7; color: #ffffff;" title="Nhập hàng loạt sách từ file Excel (.xlsx)">
+                            📥 Nhập Excel
+                        </button>
+                        <button type="button" class="btn-add-book" id="btnOpenAddBookModal">
+                            ➕ Thêm sách mới
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th>Thông tin sách</th>
+                                <th>Nguồn sách / Nhà bán</th>
+                                <th>Thể loại</th>
+                                <th>Giá bán</th>
+                                <th>Số lượng tồn kho</th>
+                                <th style="text-align: right;">Hành động quản trị</th>
+                            </tr>
+                        </thead>
+                        <tbody id="booksTableBody">
+                            <!-- Render bằng admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Thanh phân trang bảng Kho sách (render bằng admin.js) -->
+                <div class="pagination" id="booksPagination"></div>
+            </section>
+
+            <!-- TAB 2: QUẢN LÝ ĐƠN HÀNG TOÀN SÀN -->
+            <section id="tab-orders" class="tab-panel">
+                <div class="panel-controls">
+                    <div class="filter-controls-group">
+                        <input 
+                            type="search" 
+                            id="searchOrderAdminInput" 
+                            class="search-box-admin" 
+                            placeholder="Tìm mã đơn, SĐT hoặc tên khách..."
+                        >
+
+                        <select id="filterOrderSellerSelect" class="select-filter-admin">
+                            <option value="">-- Tất cả nhà bán --</option>
+                        </select>
+
+                        <select id="filterOrderStatusSelect" class="select-filter-admin">
+                            <option value="">-- Tất cả trạng thái --</option>
+                            <option value="Chờ xác nhận (COD)">Chờ xác nhận (COD)</option>
+                            <option value="Đã thanh toán (VietQR)">Đã thanh toán (VietQR)</option>
+                            <option value="Đang giao hàng">Đang giao hàng</option>
+                            <option value="Hoàn thành">Hoàn thành</option>
+                            <option value="Đã hủy">Đã hủy</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Thời gian</th>
+                                <th>Khách hàng</th>
+                                <th>Nhà bán liên quan</th>
+                                <th>Số lượng sách</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái đơn hàng</th>
+                                <th style="text-align: right;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- Render bằng admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Thanh phân trang bảng Đơn hàng (render bằng admin.js) -->
+                <div class="pagination" id="ordersPagination"></div>
+            </section>
+
+            <!-- TAB 3: THỐNG KÊ DOANH THU TOÀN SÀN (CHUYÊN SÂU) -->
+            <section id="tab-revenue" class="tab-panel">
+                <!-- KHỐI 4 CHỈ SỐ TÀI CHÍNH VĨ MÔ -->
+                <div class="revenue-kpi-grid">
+                    <div class="rev-card">
+                        <div class="rev-icon">💰</div>
+                        <div class="rev-content">
+                            <span class="rev-title">Tổng GMV Toàn Sàn</span>
+                            <div class="rev-value" id="revTotalGmv">0 ₫</div>
+                            <span class="rev-sub">Doanh số đơn hoàn thành</span>
+                        </div>
+                    </div>
+                    <div class="rev-card">
+                        <div class="rev-icon">📦</div>
+                        <div class="rev-content">
+                            <span class="rev-title">Đơn Thành Công</span>
+                            <div class="rev-value" id="revSuccessOrders">0 / 0 đơn</div>
+                            <span class="rev-sub" id="revSuccessRate">Tỷ lệ: 100%</span>
+                        </div>
+                    </div>
+                    <div class="rev-card">
+                        <div class="rev-icon">📚</div>
+                        <div class="rev-content">
+                            <span class="rev-title">Sách Đã Bán Ra</span>
+                            <div class="rev-value" id="revTotalBooksSold">0 cuốn</div>
+                            <span class="rev-sub">Toàn bộ danh mục</span>
+                        </div>
+                    </div>
+                    <div class="rev-card">
+                        <div class="rev-icon">🏪</div>
+                        <div class="rev-content">
+                            <span class="rev-title">Nhà Bán Có Doanh Số</span>
+                            <div class="rev-value" id="revActiveSellers">0 nhà bán</div>
+                            <span class="rev-sub">Hoạt động hiệu quả</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="revenue-grid-two">
+                    <!-- BẢNG 1: DOANH THU THEO NHÀ BÁN HÀNG -->
+                    <div class="table-card rev-table-box">
+                        <div class="rev-section-header">
+                            <div>
+                                <h3 class="rev-heading">🏪 Doanh Thu Theo Nhà Bán Hàng (Top Sellers)</h3>
+                                <p class="rev-subtext">Xếp hạng đối tác cung cấp sách đóng góp doanh thu lớn nhất</p>
+                            </div>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">Hạng</th>
+                                    <th>Nhà bán hàng</th>
+                                    <th>Đầu sách</th>
+                                    <th>Đã bán</th>
+                                    <th>Doanh số</th>
+                                    <th>Tỷ trọng</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sellerRevenueTableBody">
+                                <!-- Render bằng admin.js -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- BẢNG 2: DOANH THU THEO THỂ LOẠI SÁCH -->
+                    <div class="table-card rev-table-box">
+                        <div class="rev-section-header">
+                            <div>
+                                <h3 class="rev-heading">📂 Doanh Thu Theo Thể Loại Sách</h3>
+                                <p class="rev-subtext">Dòng sách mang lại hiệu quả thương mại cao nhất</p>
+                            </div>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Thể loại sách</th>
+                                    <th>Số cuốn bán</th>
+                                    <th>Doanh số</th>
+                                    <th style="width: 140px;">Tỷ trọng sàn</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoryRevenueTableBody">
+                                <!-- Render bằng admin.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- CƠ CẤU THANH TOÁN (VIETQR VS COD) -->
+                <div class="table-card payment-method-stats-card">
+                    <div class="rev-section-header">
+                        <div>
+                            <h3 class="rev-heading">💳 Cơ Cấu Phương Thức Thanh Toán</h3>
+                            <p class="rev-subtext">Thống kê dòng tiền qua Chuyển khoản tự động VietQR và Tiền mặt khi nhận hàng (COD)</p>
+                        </div>
+                    </div>
+                    <div class="payment-method-bar-wrap" id="paymentMethodStatsWrap">
+                        <!-- Render bằng admin.js -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: QUẢN LÝ THỂ LOẠI -->
+            <section id="tab-categories" class="tab-panel">
+                <div class="panel-controls">
+                    <input 
+                        type="search" 
+                        id="searchCategoryInput" 
+                        class="search-box-admin" 
+                        placeholder="Tìm thể loại sách..."
+                    >
+
+                    <button type="button" class="btn-add-book" id="btnOpenAddCategoryModal">
+                        ➕ Thêm thể loại mới
+                    </button>
+                </div>
+
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">ID</th>
+                                <th>Biểu tượng</th>
+                                <th>Tên thể loại sách</th>
+                                <th>Số lượng sách trong kho</th>
+                                <th style="text-align: right;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesTableBody">
+                            <!-- Render bằng admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TAB 4: QUẢN LÝ NGƯỜI DÙNG & KHÁCH HÀNG -->
+            <section id="tab-users" class="tab-panel">
+                <div class="panel-controls">
+                    <input 
+                        type="search" 
+                        id="searchUserInput" 
+                        class="search-box-admin" 
+                        placeholder="Tìm người dùng theo tên, email..."
+                    >
+                </div>
+
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">ID</th>
+                                <th>Họ và tên</th>
+                                <th>Email</th>
+                                <th>Vai trò</th>
+                                <th>Số đơn đã đặt</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Render bằng admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Thanh phân trang bảng Người dùng (render bằng admin.js) -->
+                <div class="pagination" id="usersPagination"></div>
+            </section>
+
+            <!-- TAB 5: QUẢN LÝ SALE & KHUYẾN MÃI -->
+            <section id="tab-sales" class="tab-panel">
+                <!-- KHUNG CẤU HÌNH ĐỢT SALE THỜI GIAN THỰC -->
+                <div class="sale-campaign-card">
+                    <div class="sale-campaign-header">
+                        <div class="campaign-title-group">
+                            <span class="campaign-icon">⚡</span>
+                            <div>
+                                <h3>Cấu Hình Đợt Flash Sale Thời Gian Thực (Realtime)</h3>
+                                <p>Thiết lập thời lượng Flash Sale (ví dụ 8 tiếng) - Đồng hồ sẽ đếm ngược từng giây ngay sau khi kích hoạt</p>
+                            </div>
+                        </div>
+                        <div id="saleStatusIndicator" class="campaign-status-badge">
+                            <!-- Hiển thị Đang diễn ra / Tạm tắt bằng JS -->
+                        </div>
+                    </div>
+
+                    <!-- KHỐI ĐỒNG HỒ ĐẾM NGƯỢC REALTIME TRÊN ADMIN DASHBOARD -->
+                    <div class="admin-sale-live-panel" id="adminSaleLivePanel">
+                        <div class="live-panel-top">
+                            <div class="live-panel-title">
+                                <span class="live-pulse"></span>
+                                <strong id="adminLiveTitle">ĐỒNG HỒ ĐẾM NGƯỢC REALTIME ĐANG CHẠY</strong>
+                            </div>
+                            <div class="live-panel-time-text" id="adminLiveTimeRange">Bắt đầu: --:-- &bull; Kết thúc: --:--</div>
+                        </div>
+                        <div class="admin-live-countdown-display">
+                            <span class="admin-live-clock" id="adminLiveClock">00:00:00</span>
+                            <span class="admin-live-desc" id="adminLiveDesc">Thời gian còn lại của đợt Sale</span>
+                        </div>
+                    </div>
+
+                    <!-- KHỐI KÍCH HOẠT NHANH FLASH SALE THEO SỐ GIỜ -->
+                    <div class="quick-sale-presets-box">
+                        <label class="quick-presets-label">⚡ Chọn nhanh thời lượng Flash Sale bắt đầu ngay bây giờ:</label>
+                        <div class="quick-presets-btns">
+                            <button type="button" class="btn-preset-hours" data-hours="0.0167">⚡ 1 Phút</button>
+                            <button type="button" class="btn-preset-hours" data-hours="2">⚡ 2 Tiếng</button>
+                            <button type="button" class="btn-preset-hours" data-hours="4">⚡ 4 Tiếng</button>
+                            <button type="button" class="btn-preset-hours active" data-hours="8">🚀 8 Tiếng (Chuẩn)</button>
+                            <button type="button" class="btn-preset-hours" data-hours="12">⚡ 12 Tiếng</button>
+                            <button type="button" class="btn-preset-hours" data-hours="24">⚡ 24 Tiếng (1 Ngày)</button>
+                        </div>
+
+                        <div class="quick-action-bar">
+                            <div class="quick-custom-hours">
+                                <label for="customDurationHours">Thời lượng tùy chỉnh (giờ, tối thiểu 0.01 = 36s / 0.0167 = 1p):</label>
+                                <input type="number" id="customDurationHours" value="8" min="0.01" max="168" step="0.01" class="input-duration-hours" placeholder="Ví dụ: 0.0167 hoặc 0.01">
+                            </div>
+                            <div class="quick-action-buttons">
+                                <button type="button" class="btn-start-quick-sale" id="btnStartQuickSale">
+                                    🚀 Bắt Đầu Đếm Ngược Ngay (8 Tiếng)
+                                </button>
+                                <button type="button" class="btn-stop-sale" id="btnStopSale">
+                                    ⏹️ Dừng Sale Ngay
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FORM CẤU HÌNH CHI TIẾT (TÊN, MÔ TẢ, NGÀY BẮT ĐẦU & KẾT THÚC) -->
+                    <details class="advanced-sale-details">
+                        <summary class="advanced-sale-summary">⚙️ Tùy chỉnh chi tiết đợt Sale (Tên chiến dịch, mô tả, ngày giờ cụ thể)</summary>
+                        <form id="saleCampaignForm" class="sale-config-form" style="margin-top: 16px;">
+                            <div class="form-row-3">
+                                <div class="form-group-admin">
+                                    <label for="campaignName">Tên đợt Sale *</label>
+                                    <input type="text" id="campaignName" placeholder="ví dụ: ⚡ Flash Sale Giờ Vàng (8 Tiếng)" required>
+                                </div>
+
+                                <div class="form-group-admin">
+                                    <label for="campaignStartDate">Thời điểm bắt đầu</label>
+                                    <input type="datetime-local" id="campaignStartDate">
+                                </div>
+
+                                <div class="form-group-admin">
+                                    <label for="campaignEndDate">Thời điểm kết thúc</label>
+                                    <input type="datetime-local" id="campaignEndDate">
+                                </div>
+                            </div>
+
+                            <div class="form-group-admin">
+                                <label for="campaignDescription">Mô tả / Thông điệp khuyến mãi</label>
+                                <input type="text" id="campaignDescription" placeholder="ví dụ: Ưu đãi giảm giá đặc biệt trong ngày hôm nay - Đếm ngược 8 tiếng!">
+                            </div>
+
+                            <div class="campaign-form-footer">
+                                <label class="toggle-sale-label">
+                                    <input type="checkbox" id="campaignIsActive" class="toggle-checkbox">
+                                    <span class="toggle-label-text">Kích hoạt chương trình Sale này</span>
+                                </label>
+
+                                <button type="submit" class="btn-save-campaign" id="btnSaveCampaign">
+                                    💾 Lưu Cấu Hình Nâng Cao
+                                </button>
+                            </div>
+                        </form>
+                    </details>
+                </div>
+
+                <!-- BẢNG SẢN PHẨM ÁP DỤNG SALE -->
+                <div class="panel-controls" style="margin-top: 28px;">
+                    <div class="filter-controls-group">
+                        <input 
+                            type="search" 
+                            id="searchSaleBookInput" 
+                            class="search-box-admin" 
+                            placeholder="Tìm sách để cấu hình sale..."
+                        >
+
+                        <select id="filterSaleStatus" class="select-filter-admin">
+                            <option value="">-- Tất cả trạng thái Sale --</option>
+                            <option value="on_sale">⚡ Đang bật Sale</option>
+                            <option value="not_sale">Không giảm giá</option>
+                        </select>
+                    </div>
+
+                    <div style="font-size: 0.9rem; color: #64748b; font-weight: 600;">
+                        Số sách đang áp dụng Sale: <strong id="saleEligibleCount" style="color: #be123c;">0</strong> cuốn
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;">Ảnh</th>
+                                <th>Tên sách & Tác giả</th>
+                                <th style="width: 130px;">Giá niêm yết</th>
+                                <th style="width: 140px; text-align: center;">Áp dụng Sale?</th>
+                                <th style="width: 140px;">% Giảm giá</th>
+                                <th style="width: 140px;">Giá sau Sale</th>
+                                <th style="width: 110px; text-align: center;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesTableBody">
+                            <!-- Render bằng admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Thanh phân trang bảng Quản lý Sale (render bằng admin.js) -->
+                <div class="pagination" id="salesPagination"></div>
+            </section>
+        </div>
+    </main>
+
+    <!-- MODAL THÊM / SỬA SÁCH -->
+    <div class="modal-overlay" id="bookModal">
+        <div class="modal-card">
+            <h3 class="modal-title" id="bookModalTitle">Thêm sách mới</h3>
+
+            <form id="bookForm">
+                <input type="hidden" id="bookId">
+
+                <div class="form-group-admin">
+                    <label for="bookName">Tên tựa sách *</label>
+                    <input type="text" id="bookName" placeholder="ví dụ: Lập trình JavaScript Hiện Đại" required>
+                </div>
+
+                <div class="form-group-admin">
+                    <label for="bookAuthor">Tác giả *</label>
+                    <input type="text" id="bookAuthor" placeholder="ví dụ: Robert C. Martin" required>
+                </div>
+
+                <div class="form-group-admin">
+                    <label for="bookSellerId">Nguồn sách / Nhà bán hàng *</label>
+                    <select id="bookSellerId" required>
+                        <!-- Nạp động danh sách nhà bán -->
+                    </select>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group-admin">
+                        <label for="bookCategoryId">Thể loại sách *</label>
+                        <select id="bookCategoryId" required>
+                            <!-- Nạp động -->
+                        </select>
+                    </div>
+
+                    <div class="form-group-admin">
+                        <label for="bookPrice">Giá bán (VNĐ) *</label>
+                        <input type="number" id="bookPrice" min="1000" step="1000" placeholder="ví dụ: 125000" required>
+                    </div>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group-admin">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 6px;">
+                            <input type="checkbox" id="bookOnSale" style="width: auto;">
+                            <strong>⚡ Bật giảm giá Sale</strong>
+                        </label>
+                        <small style="color: #64748b; font-size: 0.8rem;">Áp dụng khi có đợt Sale đang diễn ra.</small>
+                    </div>
+
+                    <div class="form-group-admin">
+                        <label for="bookDiscountPercent">% Giảm giá (0 - 90%)</label>
+                        <input type="number" id="bookDiscountPercent" min="0" max="90" step="5" placeholder="ví dụ: 25" value="0">
+                    </div>
+                </div>
+
+                <div class="form-group-admin">
+                    <label for="bookStock">Số lượng tồn kho (cuốn) *</label>
+                    <input type="number" id="bookStock" min="0" step="1" placeholder="ví dụ: 50" value="50" required>
+                    <small style="color: #64748b; font-size: 0.8rem;">Nhập số lượng sách thực tế hiện có trong kho.</small>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group-admin">
+                        <label for="bookImportDate">Thời điểm nhập sách *</label>
+                        <input type="date" id="bookImportDate" required>
+                        <small style="color: #64748b; font-size: 0.8rem;">Hệ thống tự động tính toán thời hạn Sách Mới dựa theo ngày này.</small>
+                    </div>
+
+                    <div class="form-group-admin">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 6px;">
+                            <input type="checkbox" id="bookIsNew" style="width: auto;">
+                            <strong>✨ Đặt làm Sách Mới (Huy hiệu NEW!)</strong>
+                        </label>
+                        <small style="color: #64748b; font-size: 0.8rem;">Chủ động bật/tắt hiển thị tại mục "Sách Mới Nhập Kho" trên Trang chủ.</small>
+                    </div>
+                </div>
+
+                <div class="form-group-admin image-uploader-group">
+                    <label>Ảnh bìa sách *</label>
+                    
+                    <!-- Vùng kéo thả / Tải file từ thiết bị -->
+                    <div class="image-dropzone" id="bookImageDropzone" title="Bấm để chọn file ảnh hoặc kéo thả ảnh vào đây">
+                        <input type="file" id="bookImageFile" class="image-file-input" accept="image/png, image/jpeg, image/webp, image/gif, image/svg+xml">
+                        <div class="dropzone-content">
+                            <div class="dropzone-icon">📤</div>
+                            <div class="dropzone-text">
+                                <span class="dropzone-highlight">Bấm để tải ảnh lên</span> hoặc kéo thả file vào đây
+                            </div>
+                            <div class="dropzone-hint">Hỗ trợ JPG, PNG, WEBP (Tự động nén &amp; lưu an toàn vào cơ sở dữ liệu)</div>
+                        </div>
+                    </div>
+
+                    <!-- Khung xem trước ảnh trực tiếp -->
+                    <div class="image-preview-container" id="bookImagePreviewContainer" style="display: none;">
+                        <div class="image-preview-thumb-wrap">
+                            <img id="bookImagePreview" src="" alt="Xem trước bìa sách" class="image-preview-img">
+                        </div>
+                        <div class="image-preview-info">
+                            <div class="image-preview-meta">
+                                <span class="image-preview-name" id="bookImageFileName">anh-bia.jpg</span>
+                                <span class="image-preview-size" id="bookImageFileSize"></span>
+                            </div>
+                            <div class="image-preview-status">✓ Ảnh đã sẵn sàng lưu</div>
+                            <div class="image-preview-actions">
+                                <button type="button" class="btn-preview-action btn-change-image" id="btnChangeBookImage">
+                                    🔄 Đổi ảnh khác
+                                </button>
+                                <button type="button" class="btn-preview-action btn-remove-image" id="btnRemoveBookImage">
+                                    🗑️ Xóa ảnh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lựa chọn phụ: Nhập link ảnh URL -->
+                    <div class="image-url-toggle-wrap">
+                        <button type="button" class="btn-toggle-url" id="btnToggleBookImageUrl">
+                            🔗 Hoặc nhập đường dẫn ảnh từ URL trực tiếp
+                        </button>
+                        <div class="image-url-input-wrap" id="bookImageUrlWrap" style="display: none;">
+                            <input type="url" id="bookImage" placeholder="https://images.unsplash.com/..." class="admin-input-url">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group-admin">
+                    <label for="bookDescription">Tóm tắt mô tả nội dung</label>
+                    <textarea id="bookDescription" rows="3" placeholder="Mô tả ngắn gọn về cuốn sách..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal-cancel" id="btnCancelBookModal">Hủy</button>
+                    <button type="submit" class="btn-modal-submit" id="btnSaveBook">Lưu sách</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL NHẬP KHO NHANH (QUICK RESTOCK) -->
+    <div class="modal-overlay" id="restockModal">
+        <div class="modal-card" style="max-width: 440px;">
+            <h3 class="modal-title">📥 Nhập thêm hàng vào kho</h3>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 16px;">
+                Sách: <strong id="restockBookName" style="color: #4f46e5;">...</strong><br>
+                Tồn kho hiện tại: <span id="restockCurrentStock" style="font-weight: 700; color: #dc2626;">0</span> cuốn
+            </p>
+
+            <form id="restockForm">
+                <input type="hidden" id="restockBookId">
+                <div class="form-group-admin">
+                    <label for="restockAmount">Số lượng nhập thêm *</label>
+                    <input type="number" id="restockAmount" min="1" step="1" value="20" required>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+                    <button type="button" class="btn-quick-amount" data-add="10">+10</button>
+                    <button type="button" class="btn-quick-amount" data-add="20">+20</button>
+                    <button type="button" class="btn-quick-amount" data-add="50">+50</button>
+                    <button type="button" class="btn-quick-amount" data-add="100">+100</button>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal-cancel" id="btnCancelRestockModal">Hủy</button>
+                    <button type="submit" class="btn-modal-submit" style="background: #10b981;">✓ Xác nhận nhập kho</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL CHI TIẾT ĐƠN HÀNG -->
+    <div class="modal-overlay" id="orderDetailModal">
+        <div class="modal-card" style="max-width: 650px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 class="modal-title" style="margin-bottom: 0;">📦 Chi tiết đơn hàng <span id="detailOrderCode" style="color: #4f46e5;"></span></h3>
+                <span id="detailOrderStatusBadge" class="status-badge">● ...</span>
+            </div>
+
+            <div class="order-detail-info" style="background: #f8fafc; padding: 14px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem;">
+                <p>👤 <strong>Khách hàng:</strong> <span id="detailReceiverName"></span> (<span id="detailReceiverPhone"></span>)</p>
+                <p>📍 <strong>Địa chỉ giao:</strong> <span id="detailReceiverAddress"></span></p>
+                <p>💳 <strong>Thanh toán:</strong> <span id="detailPaymentMethod"></span></p>
+                <p>🕒 <strong>Thời gian đặt:</strong> <span id="detailOrderDate"></span></p>
+            </div>
+
+            <h4 style="font-size: 1rem; margin-bottom: 10px; font-weight: 700;">Danh sách sách trong đơn:</h4>
+            <div id="detailOrderItemsList" style="max-height: 220px; overflow-y: auto; margin-bottom: 16px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <!-- Render động -->
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; font-weight: 800; padding: 10px 0; border-top: 1px dashed #cbd5e1; margin-bottom: 16px;">
+                <span>Tổng giá trị đơn:</span>
+                <span id="detailOrderTotal" style="color: #dc2626;">0 ₫</span>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" id="btnCloseOrderDetailModal">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL THÊM / SỬA THỂ LOẠI -->
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal-card" style="max-width: 440px;">
+            <h3 class="modal-title" id="categoryModalTitle">Thêm thể loại mới</h3>
+
+            <form id="categoryForm">
+                <input type="hidden" id="categoryIdInput">
+
+                <div class="form-group-admin">
+                    <label for="categoryNameInput">Tên thể loại *</label>
+                    <input type="text" id="categoryNameInput" placeholder="ví dụ: Khoa Học Viễn Tưởng" required>
+                </div>
+
+                <div class="form-group-admin">
+                    <label for="categoryIconInput">Biểu tượng (Icon emoji) *</label>
+                    <input type="text" id="categoryIconInput" placeholder="ví dụ: 🚀, 📖, 🔬" value="📖" required>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal-cancel" id="btnCancelCategoryModal">Hủy</button>
+                    <button type="submit" class="btn-modal-submit" id="btnSaveCategory">Lưu thể loại</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL NHẬP SÁCH HÀNG LOẠT TỪ EXCEL (ADMIN) -->
+    <div class="modal-overlay" id="adminImportExcelModal" style="display: none;">
+        <div class="modal-card" style="max-width: 860px; width: 92%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+                <h3 class="modal-title" style="margin-bottom: 0;">📥 Nhập Sách Hàng Loạt Từ File Excel (Admin)</h3>
+                <button type="button" class="btn-modal-cancel" id="btnCloseAdminImportModal" style="padding: 4px 10px; font-size: 1.2rem; line-height: 1; cursor: pointer;">&times;</button>
+            </div>
+
+            <div class="excel-guide-banner">
+                <div>
+                    <strong>💡 Hướng dẫn nhập sách qua Excel cho Quản trị viên</strong>
+                    <p style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">
+                        Tải file mẫu Excel chuẩn để nạp hàng chục đầu sách vào kho hệ thống cùng lúc.
+                    </p>
+                </div>
+                <button type="button" class="btn-download-template" id="btnDownloadAdminExcelTemplate">
+                    📄 Tải file Excel mẫu (.xlsx)
+                </button>
+            </div>
+
+            <div class="excel-dropzone" id="adminExcelDropzone">
+                <div class="dropzone-icon">📊</div>
+                <h4>Kéo thả file Excel (.xlsx, .xls) vào đây</h4>
+                <p>hoặc bấm vào nút bên dưới để chọn file từ máy</p>
+                <input type="file" id="inputAdminExcelFile" accept=".xlsx, .xls" class="visually-hidden">
+                <button type="button" class="btn-export-excel" id="btnBrowseAdminExcel" style="background: #4f46e5; color: #ffffff; cursor: pointer;">
+                    📁 Chọn file Excel từ máy
+                </button>
+            </div>
+
+            <div id="adminExcelPreviewSection" style="display: none; margin-top: 18px;">
+                <div class="excel-preview-summary">
+                    <span>Tổng số dòng: <strong id="adminPreviewTotal">0</strong></span>
+                    <span class="badge-valid">✓ Hợp lệ: <strong id="adminPreviewValid">0</strong></span>
+                    <span class="badge-invalid">⚠️ Có lỗi: <strong id="adminPreviewInvalid">0</strong></span>
+                </div>
+
+                <div class="excel-preview-table-wrap">
+                    <table class="excel-preview-table">
+                        <thead>
+                            <tr>
+                                <th>Dòng</th>
+                                <th>Tên sách</th>
+                                <th>Tác giả</th>
+                                <th>Thể loại</th>
+                                <th>Giá bán</th>
+                                <th>Tồn kho</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminExcelPreviewTbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="adminImportProgress" style="display: none; text-align: center; padding: 24px;">
+                <div class="spinner" style="width: 32px; height: 32px; border: 3px solid #e2e8f0; border-top-color: #4f46e5; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 10px;"></div>
+                <p id="adminImportProgressText" style="font-weight: 600; color: #4f46e5;">Đang nạp sách vào cơ sở dữ liệu toàn sàn...</p>
+            </div>
+
+            <div class="modal-footer" style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 14px;">
+                <button type="button" class="btn-modal-cancel" id="btnCancelAdminImportModal">Đóng</button>
+                <button type="button" class="btn-modal-submit" id="btnConfirmAdminImportExcel" disabled style="background: #4f46e5; opacity: 0.5; cursor: not-allowed;">
+                    ✅ Nhập <span id="adminConfirmCount">0</span> sách vào hệ thống
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="../src/js/admin.js"></script>
+</body>
+</html>

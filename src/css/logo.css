@@ -1,0 +1,80 @@
+/* ========================================================
+   BỘ LOGO ĐỐI NGŨ "NHẬT - NGUYỆT" (LIGHT / DARK LOGO)
+   Nhà Sách Trí Tuệ
+   ======================================================== */
+
+.brand-logo-container {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.brand-logo-container img {
+  width: auto;
+  height: 42px;
+  max-height: 46px;
+  object-fit: contain;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: block;
+}
+
+.brand-logo-container:hover img {
+  transform: scale(1.03);
+}
+
+/* Mặc định hiển thị: Logo Sáng (Nhật), Ẩn Logo Tối */
+.logo-dark {
+  display: none !important;
+}
+
+.logo-light {
+  display: block !important;
+}
+
+/* Khi bật Dark mode (body.dark hoặc html.dark hoặc data-theme="dark") */
+body.dark .logo-dark,
+html.dark .logo-dark,
+[data-theme="dark"] .logo-dark {
+  display: block !important;
+}
+
+body.dark .logo-light,
+html.dark .logo-light,
+[data-theme="dark"] .logo-light {
+  display: none !important;
+}
+
+/* Logo trong Topbar Admin */
+.admin-topbar .brand-logo-container img {
+  height: 40px;
+}
+
+/* Logo trong trang Auth (Đăng nhập / Đăng ký) */
+.auth-header .brand-logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.auth-header .brand-logo-container img {
+  height: 52px;
+}
+
+/* Logo trong Footer */
+.footer-logo-container {
+  display: inline-block;
+  margin-bottom: 14px;
+}
+
+.footer-logo-container img {
+  height: 44px;
+  width: auto;
+}
+
+@media (max-width: 480px) {
+  .brand-logo-container img {
+    height: 36px;
+  }
+}

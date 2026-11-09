@@ -1,0 +1,201 @@
+/* EXCEL IMPORT MODAL STYLES */
+
+.excel-guide-banner {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.excel-guide-banner strong {
+  color: #166534;
+  font-size: 0.95rem;
+}
+
+.btn-download-template {
+  background: #ffffff;
+  border: 1.5px solid #16a34a;
+  color: #16a34a;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-download-template:hover {
+  background: #16a34a;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.2);
+}
+
+.excel-dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 14px;
+  padding: 36px 24px;
+  text-align: center;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.excel-dropzone:hover,
+.excel-dropzone.dragover {
+  border-color: #4f46e5;
+  background: #eef2ff;
+}
+
+.dropzone-icon {
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+}
+
+.excel-dropzone h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.excel-dropzone p {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 16px;
+}
+
+/* PREVIEW SUMMARY */
+.excel-preview-summary {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.badge-valid {
+  color: #16a34a;
+  background: #dcfce7;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+}
+
+.badge-invalid {
+  color: #dc2626;
+  background: #fee2e2;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+}
+
+/* PREVIEW TABLE */
+.excel-preview-table-wrap {
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.excel-preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+  text-align: left;
+}
+
+.excel-preview-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  padding: 10px 12px;
+  position: sticky;
+  top: 0;
+  border-bottom: 1px solid #cbd5e1;
+  z-index: 2;
+}
+
+.excel-preview-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+}
+
+.excel-preview-table tr.row-invalid {
+  background: #fff1f2;
+}
+
+.status-badge-ok {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.status-badge-err {
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+/* DARK MODE */
+html.dark .excel-guide-banner {
+  background: #064e3b33;
+  border-color: #065f46;
+}
+
+html.dark .excel-guide-banner strong {
+  color: #34d399;
+}
+
+html.dark .btn-download-template {
+  background: #1e293b;
+  border-color: #10b981;
+  color: #34d399;
+}
+
+html.dark .excel-dropzone {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+html.dark .excel-dropzone:hover,
+html.dark .excel-dropzone.dragover {
+  background: #1e293b;
+  border-color: #6366f1;
+}
+
+html.dark .excel-dropzone h4 {
+  color: #f8fafc;
+}
+
+html.dark .excel-preview-summary {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+html.dark .excel-preview-table th {
+  background: #0f172a;
+  color: #cbd5e1;
+  border-color: #334155;
+}
+
+html.dark .excel-preview-table td {
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+html.dark .excel-preview-table tr.row-invalid {
+  background: #450a0a33;
+}
+

@@ -11,6 +11,7 @@ import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import couponRoutes from './routes/couponRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
 
 dotenv.config();
 
@@ -67,6 +68,9 @@ app.use('/coupons', couponRoutes);
 
 app.use('/api/reviews', reviewRoutes);
 app.use('/reviews', reviewRoutes);
+
+app.use('/api/cart', cartRoutes);
+app.use('/cart', cartRoutes);
 
 // Endpoint lấy menu điều hướng
 app.get(['/menu', '/api/menu'], (req, res) => {

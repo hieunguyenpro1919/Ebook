@@ -1,5 +1,6 @@
 import api from '../api/client.js';
 import { storage } from '../utils/storage.js';
+import { cartService } from './cartService.js';
 
 export const authService = {
     /**
@@ -15,6 +16,8 @@ export const authService = {
             if (data && data.success) {
                 storage.setToken(data.token);
                 storage.setUser(data.user);
+                // Tự động đồng bộ gộp giỏ hàng với MySQL
+                await cartService.syncWithServer();
                 return data.user;
             }
             throw new Error(data.message || 'Đăng nhập không thành công.');

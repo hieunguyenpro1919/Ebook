@@ -1025,6 +1025,9 @@ function setupHeroSlider(products) {
 async function init() {
     setupCurrentUser();
     updateCartBadge();
+    if (authService.getCurrentUser()) {
+        cartService.syncWithServer().then(() => updateCartBadge());
+    }
     if (searchInput) searchInput.value = '';
     await loadCategories();
     await loadAndRenderMenu();

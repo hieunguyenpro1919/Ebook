@@ -521,3 +521,8 @@ renderCart();
 setupCouponHandlers();
 initNotificationBell();
 initChatbot();
+
+// Đồng bộ giỏ hàng từ MySQL nếu user đã đăng nhập
+if (authService.getCurrentUser()) {
+    cartService.syncWithServer().then(() => renderCart());
+}

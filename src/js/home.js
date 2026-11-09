@@ -861,9 +861,9 @@ function setupCurrentUser() {
             }
         }
 
-        // Phân quyền link Kênh Người Bán & Trang Quản Trị trong Dropdown
+        // Phân quyền link Kênh Người Bán & Trang Quản Trị trong Dropdown: tách bạch hoàn toàn
         if (sellerPortalLink) {
-            sellerPortalLink.style.display = (user.role === 'seller' || user.role === 'admin') ? 'flex' : 'none';
+            sellerPortalLink.style.display = user.role === 'seller' ? 'flex' : 'none';
         }
         if (adminPortalLink) {
             adminPortalLink.style.display = user.role === 'admin' ? 'flex' : 'none';

@@ -6,3 +6,4 @@ const router = express.Router();
 router.get('/', getCoupons);
 
 export default router;
+

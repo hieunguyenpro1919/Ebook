@@ -49,10 +49,13 @@ export const getProducts = async (req, res, next) => {
     `;
     const params = [];
 
-    // Lọc theo trạng thái (mặc định chỉ lấy active cho khách, trừ khi admin/seller chỉ định)
+    // BẢO MẬT: Mặc định chỉ hiển thị sản phẩm 'active' cho khách mua hàng
+    // Chỉ khi có role admin hoặc seller mới được chỉ định lọc theo status khác
     if (status) {
       query += ' AND p.status = ?';
       params.push(status);
+    } else {
+      query += ' AND p.status = "active"';
     }
 
     if (categoryId) {
@@ -90,8 +93,8 @@ export const getProducts = async (req, res, next) => {
 
     // Phân trang
     if (_limit) {
-      const limit = parseInt(_limit, 10);
-      const page = Math.max(parseInt(_page, 10), 1);
+      const limit = Math.min(Math.max(1, parseInt(_limit, 10) || 10), 100);
+      const page = Math.max(parseInt(_page, 10) || 1, 1);
       const offset = (page - 1) * limit;
       query += ' LIMIT ? OFFSET ?';
       params.push(limit, offset);
@@ -133,7 +136,6 @@ export const createProduct = async (req, res, next) => {
       author,
       price,
       categoryId,
-      sellerId,
       image,
       description,
       stock = 100,
@@ -146,15 +148,31 @@ export const createProduct = async (req, res, next) => {
       return res.status(400).json({ message: 'Tên sách và giá là bắt buộc.' });
     }
 
-    const storeId = sellerId || (req.user && req.user.role === 'seller' ? req.user.id : 101);
+    let storeId = null;
+
+    // BẢO MẬT: Tra đúng store_id từ user_id của Seller
+    if (req.user.role === 'seller') {
+      const [stores] = await pool.query('SELECT id FROM store_profiles WHERE user_id = ?', [req.user.id]);
+      if (stores.length === 0) {
+        return res.status(400).json({ message: 'Tài khoản người bán chưa được kích hoạt gian hàng.' });
+      }
+      storeId = stores[0].id;
+    } else if (req.user.role === 'admin') {
+      // Admin có thể gán gian hàng hoặc lấy gian hàng mặc định 101
+      storeId = req.body.sellerId || req.body.storeId || 101;
+    } else {
+      return res.status(403).json({ message: 'Chỉ Người bán hoặc Quản trị viên mới có quyền đăng sách.' });
+    }
+
     const catId = categoryId || 1;
 
     const [result] = await pool.query(`
       INSERT INTO products (store_id, category_id, name, author, description, image, price, discount_percent, on_sale, stock, status, import_date)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE())
     `, [
-      storeId, catId, name, author || '', description || '', image || '',
-      price, discountPercent, onSale ? 1 : 0, stock, status
+      storeId, catId, name.trim(), author ? author.trim() : '', description || '', image || '',
+      Math.max(0, Number(price)), Math.min(100, Math.max(0, Number(discountPercent))),
+      onSale ? 1 : 0, Math.max(0, parseInt(stock, 10) || 0), status
     ]);
 
     const newId = result.insertId;
@@ -170,6 +188,20 @@ export const createProduct = async (req, res, next) => {
 export const updateProduct = async (req, res, next) => {
   try {
     const id = req.params.id;
+
+    // BẢO MẬT: Kiểm tra quyền sở hữu sản phẩm
+    const [existing] = await pool.query('SELECT store_id FROM products WHERE id = ?', [id]);
+    if (existing.length === 0) {
+      return res.status(404).json({ message: 'Không tìm thấy sản phẩm.' });
+    }
+
+    if (req.user.role === 'seller') {
+      const [stores] = await pool.query('SELECT id FROM store_profiles WHERE user_id = ?', [req.user.id]);
+      if (stores.length === 0 || stores[0].id !== existing[0].store_id) {
+        return res.status(403).json({ message: 'Bạn không có quyền chỉnh sửa sản phẩm của gian hàng khác.' });
+      }
+    }
+
     const {
       name,
       author,
@@ -197,15 +229,13 @@ export const updateProduct = async (req, res, next) => {
         status = COALESCE(?, status)
       WHERE id = ?
     `, [
-      name ?? null, author ?? null, price ?? null, categoryId ?? null,
-      image ?? null, description ?? null, stock ?? null,
-      discountPercent ?? null, onSale !== undefined ? (onSale ? 1 : 0) : null,
+      name ?? null, author ?? null, price !== undefined ? Math.max(0, Number(price)) : null,
+      categoryId ?? null, image ?? null, description ?? null,
+      stock !== undefined ? Math.max(0, parseInt(stock, 10)) : null,
+      discountPercent !== undefined ? Math.min(100, Math.max(0, Number(discountPercent))) : null,
+      onSale !== undefined ? (onSale ? 1 : 0) : null,
       status ?? null, id
     ]);
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Không tìm thấy sản phẩm để cập nhật.' });
-    }
 
     res.json({ id, message: 'Cập nhật sản phẩm thành công!' });
   } catch (err) {
@@ -216,13 +246,22 @@ export const updateProduct = async (req, res, next) => {
 export const deleteProduct = async (req, res, next) => {
   try {
     const id = req.params.id;
-    // Xóa mềm: chuyển status = 'inactive' để bảo toàn lịch sử đơn hàng
-    const [result] = await pool.query('UPDATE products SET status = "inactive" WHERE id = ?', [id]);
 
-    if (result.affectedRows === 0) {
+    // BẢO MẬT: Kiểm tra quyền sở hữu
+    const [existing] = await pool.query('SELECT store_id FROM products WHERE id = ?', [id]);
+    if (existing.length === 0) {
       return res.status(404).json({ message: 'Không tìm thấy sản phẩm.' });
     }
 
+    if (req.user.role === 'seller') {
+      const [stores] = await pool.query('SELECT id FROM store_profiles WHERE user_id = ?', [req.user.id]);
+      if (stores.length === 0 || stores[0].id !== existing[0].store_id) {
+        return res.status(403).json({ message: 'Bạn không có quyền xóa sản phẩm của gian hàng khác.' });
+      }
+    }
+
+    // Xóa mềm: chuyển status = 'inactive' để bảo toàn lịch sử đơn hàng
+    await pool.query('UPDATE products SET status = "inactive" WHERE id = ?', [id]);
     res.json({ id, message: 'Đã ngừng kinh doanh sản phẩm thành công!' });
   } catch (err) {
     next(err);

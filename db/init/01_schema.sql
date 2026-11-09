@@ -126,7 +126,7 @@ CREATE TABLE coupons (
 -- ============ ORDERS ============
 CREATE TABLE orders (
   id               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  order_code       VARCHAR(20) NOT NULL,           -- VD: DH000123
+  order_code       VARCHAR(32) NOT NULL,           -- VD: DH000123
   user_id          INT UNSIGNED NOT NULL,
   coupon_id        INT UNSIGNED NULL,
   coupon_code      VARCHAR(50) NULL,               -- snapshot

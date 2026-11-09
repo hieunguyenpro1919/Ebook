@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 
 import pool from './config/db.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+import { verifyToken, requireRole } from './middlewares/authMiddleware.js';
 
 import authRoutes from './routes/authRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
@@ -82,8 +83,8 @@ app.get(['/menu', '/api/menu'], (req, res) => {
   ]);
 });
 
-// Endpoint tương thích ngược cho các query user từ json-server cũ (GET /user?email=...&password=...)
-app.get(['/user', '/users'], async (req, res, next) => {
+// BẢO MẬT: Chỉ Admin mới có quyền truy xuất danh sách người dùng
+app.get(['/user', '/users'], verifyToken, requireRole('admin'), async (req, res, next) => {
   try {
     const { email } = req.query;
     let query = 'SELECT id, name, email, role, phone, address, avatar, status FROM users WHERE 1=1';

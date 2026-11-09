@@ -22,3 +22,4 @@ router.delete('/', clearCart);
 router.post('/sync', syncCart);
 
 export default router;
+

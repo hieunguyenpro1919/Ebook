@@ -5,6 +5,8 @@ import pool from '../config/db.js';
 const JWT_SECRET = process.env.JWT_SECRET || 'nhasach_super_secret_jwt_key_2026';
 const JWT_EXPIRES_IN = '7d';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export const register = async (req, res, next) => {
   try {
     const { name, email, password, role = 'customer', phone, address, shopName } = req.body;
@@ -16,8 +18,27 @@ export const register = async (req, res, next) => {
       });
     }
 
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!EMAIL_REGEX.test(trimmedEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Địa chỉ email không đúng định dạng.'
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mật khẩu phải chứa ít nhất 6 ký tự.'
+      });
+    }
+
+    // BẢO MẬT: Cấm tuyệt đối tự phong quyền 'admin' qua API đăng ký công khai
+    // Admin chỉ được tạo thủ công hoặc qua script migration
+    const validRole = role === 'seller' ? 'seller' : 'customer';
+
     // Kiểm tra email đã tồn tại chưa
-    const [existing] = await pool.query('SELECT id FROM users WHERE email = ?', [email]);
+    const [existing] = await pool.query('SELECT id FROM users WHERE email = ?', [trimmedEmail]);
     if (existing.length > 0) {
       return res.status(409).json({
         success: false,
@@ -27,20 +48,19 @@ export const register = async (req, res, next) => {
 
     // Băm mật khẩu
     const passwordHash = await bcrypt.hash(password, 10);
-    const validRole = ['admin', 'seller', 'customer'].includes(role) ? role : 'customer';
 
     // Tạo user
     const [result] = await pool.query(`
       INSERT INTO users (name, email, password_hash, role, phone, address, status)
       VALUES (?, ?, ?, ?, ?, ?, 'active')
-    `, [name, email, passwordHash, validRole, phone || null, address || null]);
+    `, [name.trim(), trimmedEmail, passwordHash, validRole, phone || null, address || null]);
 
     const newUserId = result.insertId;
 
     // Nếu đăng ký làm seller, tạo luôn store_profile
     let storeInfo = null;
     if (validRole === 'seller') {
-      const storeName = shopName || `${name}'s Bookstore`;
+      const storeName = shopName || `${name.trim()}'s Bookstore`;
       const [storeResult] = await pool.query(`
         INSERT INTO store_profiles (user_id, store_name, description)
         VALUES (?, ?, ?)
@@ -50,7 +70,7 @@ export const register = async (req, res, next) => {
 
     // Cấp phát token
     const token = jwt.sign(
-      { id: newUserId, email, role: validRole, name },
+      { id: newUserId, email: trimmedEmail, role: validRole, name: name.trim() },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN }
     );
@@ -61,8 +81,8 @@ export const register = async (req, res, next) => {
       token,
       user: {
         id: newUserId,
-        name,
-        email,
+        name: name.trim(),
+        email: trimmedEmail,
         role: validRole,
         phone,
         address,
@@ -85,6 +105,8 @@ export const login = async (req, res, next) => {
       });
     }
 
+    const trimmedEmail = email.trim().toLowerCase();
+
     // Tìm user
     const [rows] = await pool.query(`
       SELECT u.id, u.name, u.email, u.password_hash, u.role, u.phone, u.address, u.avatar, u.status,
@@ -92,7 +114,7 @@ export const login = async (req, res, next) => {
       FROM users u
       LEFT JOIN store_profiles s ON s.user_id = u.id
       WHERE u.email = ?
-    `, [email]);
+    `, [trimmedEmail]);
 
     if (rows.length === 0) {
       return res.status(401).json({
@@ -191,16 +213,50 @@ export const getProfile = async (req, res, next) => {
 
 export const updateProfile = async (req, res, next) => {
   try {
-    const { name, phone, address, avatar, password } = req.body;
+    const { name, phone, address, avatar, oldPassword, newPassword, password } = req.body;
     const userId = req.user.id;
+
+    // Nếu muốn đổi mật khẩu, bắt buộc phải cung cấp mật khẩu cũ để đối soát
+    const passToChange = newPassword || password;
+    let passwordHash = null;
+
+    if (passToChange) {
+      if (!oldPassword) {
+        return res.status(400).json({
+          success: false,
+          message: 'Vui lòng cung cấp mật khẩu hiện tại (oldPassword) để đổi mật khẩu mới.'
+        });
+      }
+
+      if (passToChange.length < 6) {
+        return res.status(400).json({
+          success: false,
+          message: 'Mật khẩu mới phải có ít nhất 6 ký tự.'
+        });
+      }
+
+      const [uRows] = await pool.query('SELECT password_hash FROM users WHERE id = ?', [userId]);
+      if (uRows.length === 0) {
+        return res.status(404).json({ success: false, message: 'Người dùng không tồn tại.' });
+      }
+
+      const isOldMatch = await bcrypt.compare(oldPassword, uRows[0].password_hash);
+      if (!isOldMatch) {
+        return res.status(400).json({
+          success: false,
+          message: 'Mật khẩu hiện tại không chính xác. Không thể đổi mật khẩu.'
+        });
+      }
+
+      passwordHash = await bcrypt.hash(passToChange, 10);
+    }
 
     let updateQuery = 'UPDATE users SET name = COALESCE(?, name), phone = COALESCE(?, phone), address = COALESCE(?, address), avatar = COALESCE(?, avatar)';
     const params = [name || null, phone || null, address || null, avatar || null];
 
-    if (password) {
-      const hash = await bcrypt.hash(password, 10);
+    if (passwordHash) {
       updateQuery += ', password_hash = ?';
-      params.push(hash);
+      params.push(passwordHash);
     }
 
     updateQuery += ' WHERE id = ?';

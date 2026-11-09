@@ -34,3 +34,4 @@ export const getCoupons = async (req, res, next) => {
     next(err);
   }
 };
+

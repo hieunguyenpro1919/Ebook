@@ -3,6 +3,7 @@ SET NAMES utf8mb4;
 
 DELIMITER $$
 
+DROP PROCEDURE IF EXISTS sp_place_order$$
 -- ============ ĐẶT HÀNG VÀ TRỪ TỒN KHO AN TOÀN (TRANSACTION + ROW LOCKING) ============
 CREATE PROCEDURE sp_place_order(
   IN  p_user_id          INT UNSIGNED,
@@ -15,7 +16,7 @@ CREATE PROCEDURE sp_place_order(
   IN  p_shipping_fee     DECIMAL(12,2),    -- backend tự tính
   IN  p_items            JSON,             -- [{"productId":1,"quantity":2}, ...]
   OUT o_order_id         BIGINT UNSIGNED,
-  OUT o_order_code       VARCHAR(20),
+  OUT o_order_code       VARCHAR(32),
   OUT o_total_amount     DECIMAL(12,2)
 )
 BEGIN
@@ -78,10 +79,10 @@ BEGIN
       SET MESSAGE_TEXT = 'Có sản phẩm không tồn tại, ngừng bán hoặc không đủ tồn kho';
   END IF;
 
-  -- 3) Tạo đơn (mã tạm, cập nhật sau khi có id)
+  -- 3) Tạo đơn (mã tạm an toàn <= 16 ký tự, cập nhật sau khi có id)
   INSERT INTO orders (order_code, user_id, receiver_name, receiver_phone,
                       receiver_address, receiver_note, payment_method, shipping_fee)
-  VALUES (CONCAT('TMP', UUID_SHORT()), p_user_id, p_receiver_name, p_receiver_phone,
+  VALUES (CONCAT('T', LEFT(REPLACE(UUID(),'-',''), 15)), p_user_id, p_receiver_name, p_receiver_phone,
           p_receiver_address, p_receiver_note, p_payment_method, v_ship);
   SET o_order_id   = LAST_INSERT_ID();
   SET o_order_code = CONCAT('DH', LPAD(o_order_id, 6, '0'));
@@ -150,6 +151,7 @@ BEGIN
   DROP TEMPORARY TABLE IF EXISTS tmp_order_items;
 END$$
 
+DROP PROCEDURE IF EXISTS sp_cancel_order$$
 -- ============ HỦY ĐƠN: HOÀN KHO (CHỈ KHI ĐƠN CHƯA GIAO) ============
 CREATE PROCEDURE sp_cancel_order(IN p_order_id BIGINT UNSIGNED)
 BEGIN

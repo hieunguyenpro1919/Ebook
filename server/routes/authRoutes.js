@@ -10,3 +10,4 @@ router.get('/profile', verifyToken, getProfile);
 router.put('/profile', verifyToken, updateProfile);
 
 export default router;
+

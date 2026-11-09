@@ -4,7 +4,6 @@ export const createOrder = async (req, res, next) => {
   const connection = await pool.getConnection();
   try {
     const {
-      userId,
       receiverName,
       receiverPhone,
       receiverAddress,
@@ -29,26 +28,28 @@ export const createOrder = async (req, res, next) => {
       });
     }
 
-    // Chuẩn hóa danh sách items sang format SP mong muốn: [{"productId": 1, "quantity": 2}]
+    // BẢO MẬT: Bắt buộc lấy userId từ JWT Token đã xác thực
+    const uId = req.user.id;
+
+    // Chuẩn hóa danh sách items sang format SP: [{"productId": 1, "quantity": 2}]
     const formattedItems = items.map(item => ({
       productId: item.productId || item.id,
-      quantity: Number(item.quantity) || 1
+      quantity: Math.min(100, Math.max(1, parseInt(item.quantity, 10) || 1))
     }));
 
-    const uId = userId || (req.user ? req.user.id : 1);
-    const pMethod = paymentMethod === 'VietQR' ? 'VietQR' : 'COD';
+    const pMethod = paymentMethod === 'VIETQR' ? 'VietQR' : 'COD';
     const cCode = couponCode && couponCode.trim() ? couponCode.trim() : null;
 
     // Gọi Stored Procedure đặt hàng an toàn (nguyên tử)
     await connection.query('CALL sp_place_order(?, ?, ?, ?, ?, ?, ?, ?, ?, @o_id, @o_code, @o_total)', [
       uId,
-      receiverName,
-      receiverPhone,
-      receiverAddress,
-      receiverNote,
+      receiverName.trim(),
+      receiverPhone.trim(),
+      receiverAddress.trim(),
+      receiverNote.trim(),
       pMethod,
       cCode,
-      Number(shippingFee) || 0,
+      Math.max(0, Number(shippingFee) || 0),
       JSON.stringify(formattedItems)
     ]);
 
@@ -72,8 +73,7 @@ export const createOrder = async (req, res, next) => {
 
 export const getOrders = async (req, res, next) => {
   try {
-    const { userId, sellerId, status } = req.query;
-
+    const user = req.user;
     let query = `
       SELECT o.*, u.email AS user_email, u.name AS user_name
       FROM orders o
@@ -82,21 +82,21 @@ export const getOrders = async (req, res, next) => {
     `;
     const params = [];
 
-    if (userId) {
+    // BẢO MẬT PHÂN QUYỀN TRUY XUẤT ĐƠN HÀNG:
+    if (user.role === 'customer') {
+      // Khách hàng thông thường: CHỈ ĐƯỢC XEM ĐƠN CỦA CHÍNH MÌNH
       query += ' AND o.user_id = ?';
-      params.push(userId);
-    }
-
-    if (status) {
-      query += ' AND o.status = ?';
-      params.push(status);
-    }
-
-    // Nếu seller lọc đơn, chỉ lấy các đơn có order_items thuộc shop của seller
-    if (sellerId) {
+      params.push(user.id);
+    } else if (user.role === 'seller') {
+      // Người bán: CHỈ ĐƯỢC XEM ĐƠN CÓ MÓN THUỘC GIAN HÀNG CỦA MÌNH
+      const [stores] = await pool.query('SELECT id FROM store_profiles WHERE user_id = ?', [user.id]);
+      if (stores.length === 0) {
+        return res.json([]);
+      }
       query += ` AND EXISTS (SELECT 1 FROM order_items oi WHERE oi.order_id = o.id AND oi.store_id = ?)`;
-      params.push(sellerId);
+      params.push(stores[0].id);
     }
+    // Nếu là admin: được phép xem toàn bộ đơn hàng
 
     query += ' ORDER BY o.id DESC';
 
@@ -147,6 +147,8 @@ export const getOrders = async (req, res, next) => {
 export const getOrderById = async (req, res, next) => {
   try {
     const id = req.params.id;
+    const user = req.user;
+
     const [orders] = await pool.query('SELECT * FROM orders WHERE id = ? OR order_code = ?', [id, id]);
 
     if (orders.length === 0) {
@@ -154,6 +156,12 @@ export const getOrderById = async (req, res, next) => {
     }
 
     const order = orders[0];
+
+    // BẢO MẬT: Khách hàng không được xem đơn của người khác
+    if (user.role === 'customer' && order.user_id !== user.id) {
+      return res.status(403).json({ message: 'Bạn không có quyền xem đơn hàng này.' });
+    }
+
     const [items] = await pool.query(`
       SELECT oi.*, s.store_name, p.image
       FROM order_items oi
@@ -161,6 +169,16 @@ export const getOrderById = async (req, res, next) => {
       LEFT JOIN products p ON p.id = oi.product_id
       WHERE oi.order_id = ?
     `, [order.id]);
+
+    // Nếu là seller, kiểm tra xem đơn hàng có mặt hàng nào thuộc shop mình không
+    if (user.role === 'seller') {
+      const [stores] = await pool.query('SELECT id FROM store_profiles WHERE user_id = ?', [user.id]);
+      const myStoreId = stores.length > 0 ? stores[0].id : -1;
+      const hasMyProduct = items.some(item => item.store_id === myStoreId);
+      if (!hasMyProduct) {
+        return res.status(403).json({ message: 'Bạn không có quyền xem đơn hàng không thuộc gian hàng của mình.' });
+      }
+    }
 
     order.items = items.map(item => ({
       id: item.product_id,
@@ -188,19 +206,36 @@ export const getOrderById = async (req, res, next) => {
 export const updateOrderStatus = async (req, res, next) => {
   try {
     const id = req.params.id;
+    const user = req.user;
     const { status, paymentStatus } = req.body;
 
-    const validStatuses = ['pending', 'processing', 'shipping', 'completed', 'cancelled'];
-    if (status && !validStatuses.includes(status)) {
-      return res.status(400).json({ message: 'Trạng thái đơn hàng không hợp lệ.' });
+    const [orders] = await pool.query('SELECT * FROM orders WHERE id = ?', [id]);
+    if (orders.length === 0) {
+      return res.status(404).json({ message: 'Không tìm thấy đơn hàng.' });
     }
 
-    // Nếu cập nhật sang cancelled, gọi sp_cancel_order để tự động hoàn tồn kho!
+    const order = orders[0];
+
+    // BẢO MẬT: Khách hàng chỉ được phép HỦY đơn của chính mình khi đơn đang ở trạng thái 'pending'
+    if (user.role === 'customer') {
+      if (order.user_id !== user.id) {
+        return res.status(403).json({ message: 'Bạn không có quyền sửa đơn hàng này.' });
+      }
+      if (status !== 'cancelled') {
+        return res.status(403).json({ message: 'Khách hàng chỉ có quyền yêu cầu hủy đơn hàng.' });
+      }
+      if (order.status !== 'pending') {
+        return res.status(400).json({ message: 'Đơn hàng đã được xử lý hoặc đang giao, không thể hủy.' });
+      }
+    }
+
+    // Nếu hủy đơn, gọi Stored Procedure hoàn kho an toàn
     if (status === 'cancelled') {
       await pool.query('CALL sp_cancel_order(?)', [id]);
       return res.json({ id, message: 'Đã hủy đơn hàng và hoàn lại tồn kho thành công!' });
     }
 
+    // Người bán và Admin cập nhật trạng thái
     await pool.query(`
       UPDATE orders SET
         status = COALESCE(?, status),

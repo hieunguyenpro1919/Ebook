@@ -40,25 +40,26 @@ export const getReviews = async (req, res, next) => {
 
 export const createReview = async (req, res, next) => {
   try {
-    const { productId, userId, rating, comment, parentId = null } = req.body;
+    const { productId, rating, comment, parentId = null } = req.body;
 
     if (!productId || !comment) {
       return res.status(400).json({ message: 'Vui lòng cung cấp mã sản phẩm và nội dung đánh giá.' });
     }
 
-    const uId = userId || (req.user ? req.user.id : 1);
+    // BẢO MẬT: Bắt buộc lấy userId từ JWT Token (chống mạo danh user khác)
+    const uId = req.user.id;
 
     const [result] = await pool.query(`
       INSERT INTO reviews (product_id, user_id, parent_id, rating, comment)
       VALUES (?, ?, ?, ?, ?)
-    `, [productId, uId, parentId || null, parentId ? null : (rating || 5), comment]);
+    `, [productId, uId, parentId || null, parentId ? null : Math.min(5, Math.max(1, parseInt(rating, 10) || 5)), comment.trim()]);
 
     res.status(201).json({
       id: result.insertId,
       productId,
       userId: uId,
       rating: parentId ? null : (rating || 5),
-      comment,
+      comment: comment.trim(),
       message: 'Gửi đánh giá thành công!'
     });
   } catch (err) {

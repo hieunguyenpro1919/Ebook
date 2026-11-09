@@ -4,7 +4,7 @@ import { reviewService } from '../services/reviewService.js';
 import { authService } from '../services/authService.js';
 import { saleService } from '../services/saleService.js';
 import { wishlistService } from '../services/wishlistService.js';
-import { formatPrice } from '../utils/format.js';
+import { formatPrice, escapeHtml } from '../utils/format.js';
 import { initChatbot } from './chatWidget.js';
 import { initNotificationBell } from './notificationBell.js';
 import { initInternalChat } from './internalChat.js';
@@ -106,10 +106,10 @@ function renderReviewsListHtml(reviews) {
         <div class="review-item-card" data-review-id="${r.id}">
             <div class="review-item-header">
                 <div class="reviewer-avatar">
-                    ${(r.userName || 'B')[0].toUpperCase()}
+                    ${(escapeHtml(r.userName || 'B'))[0].toUpperCase()}
                 </div>
                 <div class="reviewer-meta">
-                    <strong class="reviewer-name">${r.userName || 'Độc giả ẩn danh'}</strong>
+                    <strong class="reviewer-name">${escapeHtml(r.userName || 'Độc giả ẩn danh')}</strong>
                     <div class="reviewer-stars">
                         ${renderStarsHtml(r.rating)}
                         <span class="review-date">${formatTimeAgo(r.createdAt)}</span>
@@ -117,7 +117,7 @@ function renderReviewsListHtml(reviews) {
                 </div>
             </div>
             <div class="review-content">
-                <p>${r.comment || 'Người mua không để lại nhận xét bằng lời.'}</p>
+                <p>${escapeHtml(r.comment || 'Người mua không để lại nhận xét bằng lời.')}</p>
             </div>
 
             <!-- Thanh tương tác: Nút Like & Trả lời bình luận -->
@@ -137,13 +137,13 @@ function renderReviewsListHtml(reviews) {
                 <div class="replies-list" id="repliesList-${r.id}">
                     ${replies.map(rep => `
                         <div class="reply-item">
-                            <div class="reply-avatar">${(rep.userName || 'B')[0].toUpperCase()}</div>
+                            <div class="reply-avatar">${(escapeHtml(rep.userName || 'B'))[0].toUpperCase()}</div>
                             <div class="reply-body">
                                 <div class="reply-header">
-                                    <strong class="reply-name">${rep.userName || 'Bạn đọc'}</strong>
+                                    <strong class="reply-name">${escapeHtml(rep.userName || 'Bạn đọc')}</strong>
                                     <span class="reply-date">${formatTimeAgo(rep.createdAt)}</span>
                                 </div>
-                                <div class="reply-text">${rep.comment}</div>
+                                <div class="reply-text">${escapeHtml(rep.comment)}</div>
                             </div>
                         </div>
                     `).join('')}
@@ -217,6 +217,40 @@ function renderReviewBoxHtml(currentUser, reviews, product) {
     `;
 }
 
+// Quản lý đếm ngược Flash Sale trang chi tiết
+let detailSaleCountdownTimer = null;
+
+function startDetailSaleCountdown(saleConfig) {
+    if (detailSaleCountdownTimer) {
+        clearInterval(detailSaleCountdownTimer);
+        detailSaleCountdownTimer = null;
+    }
+
+    if (!saleConfig) return;
+
+    function tick() {
+        const rem = saleService.getTimeRemaining(saleConfig);
+        const clockEl = document.querySelector('#detailSaleCountdown');
+
+        if (rem.isExpired) {
+            if (detailSaleCountdownTimer) {
+                clearInterval(detailSaleCountdownTimer);
+                detailSaleCountdownTimer = null;
+            }
+            // Tải lại trang chi tiết để giá quay về giá gốc
+            getProductDetail();
+            return;
+        }
+
+        if (clockEl) {
+            clockEl.textContent = rem.formatted;
+        }
+    }
+
+    tick();
+    detailSaleCountdownTimer = setInterval(tick, 1000);
+}
+
 // 6. Tải và render toàn bộ trang chi tiết
 async function getProductDetail() {
     const params = new URLSearchParams(window.location.search);
@@ -256,39 +290,6 @@ async function getProductDetail() {
         // Kiểm tra xem cuốn sách này có đang trong đợt Sale hay không
         const isSaleCampaignActive = saleService.isSaleActive(saleConfig);
         const priceInfo = saleService.getPriceInfo(product, isSaleCampaignActive);
-
-let detailSaleCountdownTimer = null;
-
-function startDetailSaleCountdown(saleConfig) {
-    if (detailSaleCountdownTimer) {
-        clearInterval(detailSaleCountdownTimer);
-        detailSaleCountdownTimer = null;
-    }
-
-    if (!saleConfig) return;
-
-    function tick() {
-        const rem = saleService.getTimeRemaining(saleConfig);
-        const clockEl = document.querySelector('#detailSaleCountdown');
-
-        if (rem.isExpired) {
-            if (detailSaleCountdownTimer) {
-                clearInterval(detailSaleCountdownTimer);
-                detailSaleCountdownTimer = null;
-            }
-            // Tải lại trang chi tiết để giá quay về giá gốc
-            getProductDetail();
-            return;
-        }
-
-        if (clockEl) {
-            clockEl.textContent = rem.formatted;
-        }
-    }
-
-    tick();
-    detailSaleCountdownTimer = setInterval(tick, 1000);
-}
 
         // Khung giá hiển thị
         const priceBoxHtml = priceInfo.isSale

@@ -21,3 +21,4 @@ export const getCategoryById = async (req, res, next) => {
     next(err);
   }
 };
+

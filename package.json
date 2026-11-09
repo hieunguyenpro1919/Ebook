@@ -6,12 +6,18 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "server": "json-server db.json --port 3000"
+    "server": "node server/index.js",
+    "backend": "node server/index.js",
+    "mock": "json-server db.json --port 3000"
   },
   "dependencies": {
     "axios": "^1.7.9",
     "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0",
     "html2pdf.js": "^0.14.0",
+    "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.24.6",
     "xlsx": "^0.18.5"
   },
